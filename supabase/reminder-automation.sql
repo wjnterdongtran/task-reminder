@@ -30,11 +30,12 @@ BEGIN
 END;
 $$;
 
--- Schedule the function to run every minute
+-- Schedule the function to run at 12:00 AM Vietnam time (UTC+7)
 -- Note: pg_cron jobs are scheduled in UTC timezone
+-- 12:00 AM Vietnam (UTC+7) = 5:00 PM UTC (17:00)
 SELECT cron.schedule(
   'check-task-reminders',        -- job name
-  '* * * * *',                   -- cron expression: every minute
+  '0 17 * * *',                  -- cron expression: daily at 17:00 UTC (12:00 AM Vietnam)
   'SELECT check_and_update_task_reminders();'
 );
 

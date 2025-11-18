@@ -38,7 +38,7 @@ The `reminder-automation.sql` migration sets up:
 
 - **pg_cron extension**: Enables scheduled jobs in PostgreSQL
 - **check_and_update_task_reminders()**: Database function that checks for WORKING tasks that have exceeded their `reminder_interval` and automatically updates them to NEED_TAKING_CARE status
-- **Cron job**: Runs every minute to check for tasks needing reminders
+- **Cron job**: Runs daily at 12:00 AM Vietnam time (17:00 UTC) to check for tasks needing reminders
 - **manual_check_reminders()**: Optional function for manually triggering reminder checks (useful for testing)
 
 #### How It Works
@@ -46,7 +46,7 @@ The `reminder-automation.sql` migration sets up:
 The reminder system tracks when users last **viewed** a task:
 
 1. **Field meaning**: `last_reminded_at` tracks when the user last viewed the task details (NOT when status changed)
-2. **Automatic check**: Every minute, pg_cron runs `check_and_update_task_reminders()`
+2. **Automatic check**: Daily at 12:00 AM Vietnam time, pg_cron runs `check_and_update_task_reminders()`
 3. **Time calculation**: The function calculates time since user last viewed:
    - If `last_reminded_at` exists: time since that timestamp
    - If `last_reminded_at` is NULL: time since `created_at` (task never viewed)
