@@ -20,6 +20,7 @@ export type Database = {
           created_at: string;
           last_reminded_at: string | null;
           updated_at: string;
+          user_id: string | null;
         };
         Insert: {
           id?: string;
@@ -31,6 +32,7 @@ export type Database = {
           created_at?: string;
           last_reminded_at?: string | null;
           updated_at?: string;
+          user_id?: string | null;
         };
         Update: {
           id?: string;
@@ -42,8 +44,16 @@ export type Database = {
           created_at?: string;
           last_reminded_at?: string | null;
           updated_at?: string;
+          user_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "tasks_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
     Views: {

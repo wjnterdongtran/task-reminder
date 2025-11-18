@@ -4,6 +4,8 @@ A modern, feature-rich task management application built with Next.js and Supaba
 
 ## Features
 
+- **User Authentication**: Secure login/signup with Supabase Auth
+- **Private Task Management**: Each user's tasks are private and secure
 - **Kanban Board View**: Organize tasks across four status columns (Init, Working, Need Taking Care, Done)
 - **List View**: Alternative view with search and filtering capabilities
 - **Drag & Drop**: Intuitive task management with drag-and-drop reordering
@@ -67,6 +69,7 @@ cp .env.local.example .env.local
 2. Navigate to **SQL Editor**
 3. Copy the contents of `supabase/schema.sql`
 4. Execute the SQL
+5. Then execute `supabase/auth-migration.sql` to add authentication support
 
 ### 4. Run the Development Server
 
@@ -165,20 +168,30 @@ Make sure to add these in your deployment platform:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-## Security Considerations
+## Security
 
-The current setup uses public access for development. For production:
+The application implements comprehensive security measures:
 
-1. **Enable Authentication**: Add Supabase Auth
-2. **Update RLS Policies**: Restrict access to authenticated users
-3. **Add User Context**: Associate tasks with user IDs
-4. **Secure Keys**: Never expose service_role key in client code
+1. **Authentication Required**: All task operations require user authentication
+2. **Row Level Security (RLS)**: Database-level policies ensure users can only access their own tasks
+3. **Automatic User Association**: Tasks are automatically linked to the authenticated user
+4. **Protected Routes**: Unauthorized access automatically redirects to login
+5. **Secure Keys**: Service role keys are never exposed to the client
 
-See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for production security guidelines.
+See [docs/AUTHENTICATION.md](./docs/AUTHENTICATION.md) for security details.
+
+## Authentication
+
+The app requires user authentication. On first visit, you'll see a login page where you can:
+- **Sign up** for a new account
+- **Sign in** with existing credentials
+
+Each user's tasks are private and isolated. See [docs/AUTHENTICATION.md](./docs/AUTHENTICATION.md) for details.
 
 ## Documentation
 
 - [Supabase Setup Guide](./SUPABASE_SETUP.md)
+- [Authentication Setup](./docs/AUTHENTICATION.md)
 - [Supabase MCP Setup](./docs/SUPABASE_MCP_SETUP.md)
 - [Migration Guide](./docs/MIGRATION.md)
 
