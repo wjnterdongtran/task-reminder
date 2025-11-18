@@ -18,7 +18,8 @@ export default function Home() {
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('board');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const { tasks, isLoaded, addTask, updateTaskStatus, deleteTask, markAsReminded } = useTasks();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, markAsReminded, setAllTasks } = useTasks();
 
   // Set up automatic reminder checking
   useTaskReminder({ tasks, markAsReminded, isLoaded });
@@ -26,6 +27,32 @@ export default function Home() {
   const handleAddTask = (data: TaskFormData) => {
     addTask(data);
     setShowForm(false);
+  };
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setShowForm(false);
+  };
+
+  const handleUpdateTask = (data: TaskFormData) => {
+    if (editingTask) {
+      updateTask(editingTask.id, {
+        name: data.name,
+        description: data.description,
+        url: data.url,
+        reminderInterval: data.reminderInterval,
+      });
+      setEditingTask(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+  };
+
+  const handleReorderTasks = (reorderedTasks: Task[]) => {
+    // Update the tasks array with the new order
+    setAllTasks(reorderedTasks);
   };
 
   const handleViewDetails = (task: Task) => {
@@ -136,10 +163,27 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Task Form */}
-        {showForm && (
+        {/* Task Form (Create) */}
+        {showForm && !editingTask && (
           <div className="mb-8">
             <TaskForm onSubmit={handleAddTask} onCancel={() => setShowForm(false)} />
+          </div>
+        )}
+
+        {/* Task Form (Edit) */}
+        {editingTask && (
+          <div className="mb-8">
+            <TaskForm
+              onSubmit={handleUpdateTask}
+              onCancel={handleCancelEdit}
+              initialValues={{
+                name: editingTask.name,
+                description: editingTask.description,
+                url: editingTask.url,
+                reminderInterval: editingTask.reminderInterval,
+              }}
+              isEditMode={true}
+            />
           </div>
         )}
 
@@ -149,7 +193,9 @@ export default function Home() {
             <KanbanBoard
               tasks={tasks}
               onStatusChange={updateTaskStatus}
+              onReorderTasks={handleReorderTasks}
               onDeleteTask={deleteTask}
+              onEditTask={handleEditTask}
               onViewDetails={handleViewDetails}
             />
           ) : (

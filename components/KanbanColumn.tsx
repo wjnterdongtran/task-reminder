@@ -11,6 +11,7 @@ interface KanbanColumnProps {
   color: 'amber' | 'cyan' | 'rose' | 'emerald';
   tasks: Task[];
   onDeleteTask: (taskId: string) => void;
+  onEditTask?: (task: Task) => void;
   onViewDetails?: (task: Task) => void;
 }
 
@@ -41,7 +42,7 @@ const colorStyles = {
   },
 };
 
-export default function KanbanColumn({ status, color, tasks, onDeleteTask, onViewDetails }: KanbanColumnProps) {
+export default function KanbanColumn({ status, color, tasks, onDeleteTask, onEditTask, onViewDetails }: KanbanColumnProps) {
   const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({
     id: status,
@@ -110,7 +111,7 @@ export default function KanbanColumn({ status, color, tasks, onDeleteTask, onVie
             </div>
           ) : (
             <>
-              {tasks.map((task) => <KanbanCard key={task.id} task={task} onDeleteTask={onDeleteTask} onViewDetails={onViewDetails} />)}
+              {tasks.map((task) => <KanbanCard key={task.id} task={task} onDeleteTask={onDeleteTask} onEditTask={onEditTask} onViewDetails={onViewDetails} />)}
               {/* Extra space at bottom for dropping */}
               <div className="min-h-[100px]"></div>
             </>
