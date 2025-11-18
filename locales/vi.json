@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appTitle": "Quản Lý Công Việc",
+    "language": "Ngôn ngữ",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "add": "Thêm",
+    "search": "Tìm kiếm",
+    "filter": "Lọc"
+  },
+  "taskStatus": {
+    "init": "Cần Làm",
+    "working": "Đang Làm",
+    "needCare": "Cần Chú Ý",
+    "done": "Hoàn Thành"
+  },
+  "taskForm": {
+    "title": "Tạo Công Việc Mới",
+    "editTitle": "Chỉnh Sửa Công Việc",
+    "taskName": "Tên Công Việc",
+    "taskNamePlaceholder": "Nhập tên công việc...",
+    "description": "Mô Tả",
+    "descriptionPlaceholder": "Thêm mô tả công việc (Hỗ trợ Markdown)...",
+    "url": "Liên Kết",
+    "urlPlaceholder": "https://jira.example.com/TASK-123",
+    "reminderInterval": "Khoảng Thời Gian Nhắc Nhở (giờ)",
+    "reminderIntervalHint": "Bạn muốn được nhắc nhở công việc này bao lâu một lần?",
+    "createTask": "Tạo Công Việc",
+    "updateTask": "Cập Nhật",
+    "cancel": "Hủy"
+  },
+  "taskList": {
+    "searchPlaceholder": "Tìm kiếm theo tên, mô tả, hoặc URL...",
+    "allTasks": "Tất Cả",
+    "noTasks": "Không có công việc nào",
+    "noTasksHint": "Tạo công việc đầu tiên để bắt đầu",
+    "noSearchResults": "Không tìm thấy công việc phù hợp",
+    "taskCount": "{{count}} công việc",
+    "taskCount_plural": "{{count}} công việc"
+  },
+  "taskItem": {
+    "created": "Tạo lúc",
+    "lastReminded": "Nhắc lần cuối",
+    "needsAttention": "Cần Chú Ý",
+    "confirmDelete": "Nhấn lại để xác nhận xóa",
+    "expand": "Mở rộng",
+    "collapse": "Thu gọn",
+    "viewUrl": "Xem liên kết"
+  },
+  "kanban": {
+    "boardTitle": "Bảng Công Việc",
+    "dragHint": "Kéo thả công việc giữa các cột để cập nhật trạng thái",
+    "emptyColumn": "Không có công việc",
+    "dropHere": "Thả vào đây"
+  },
+  "header": {
+    "newTask": "Công Việc Mới",
+    "toggleView": "Chuyển Giao Diện",
+    "listView": "Dạng Danh Sách",
+    "boardView": "Dạng Bảng"
+  }
+}

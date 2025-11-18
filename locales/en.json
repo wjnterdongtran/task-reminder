@@ -1,0 +1,64 @@
+{
+  "common": {
+    "appTitle": "Task Reminder",
+    "language": "Language",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter"
+  },
+  "taskStatus": {
+    "init": "To Do",
+    "working": "In Progress",
+    "needCare": "Needs Attention",
+    "done": "Completed"
+  },
+  "taskForm": {
+    "title": "Create New Task",
+    "editTitle": "Edit Task",
+    "taskName": "Task Name",
+    "taskNamePlaceholder": "Enter task name...",
+    "description": "Description",
+    "descriptionPlaceholder": "Add task description (Markdown supported)...",
+    "url": "Related URL",
+    "urlPlaceholder": "https://jira.example.com/TASK-123",
+    "reminderInterval": "Reminder Interval (hours)",
+    "reminderIntervalHint": "How often should we remind you about this task?",
+    "createTask": "Create Task",
+    "updateTask": "Update Task",
+    "cancel": "Cancel"
+  },
+  "taskList": {
+    "searchPlaceholder": "Search tasks by name, description, or URL...",
+    "allTasks": "All Tasks",
+    "noTasks": "No tasks found",
+    "noTasksHint": "Create your first task to get started",
+    "noSearchResults": "No tasks match your search",
+    "taskCount": "{{count}} task",
+    "taskCount_plural": "{{count}} tasks"
+  },
+  "taskItem": {
+    "created": "Created",
+    "lastReminded": "Last reminded",
+    "needsAttention": "Needs Attention",
+    "confirmDelete": "Click again to confirm deletion",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "viewUrl": "View related link"
+  },
+  "kanban": {
+    "boardTitle": "Task Board",
+    "dragHint": "Drag tasks between columns to update status",
+    "emptyColumn": "No tasks in this status",
+    "dropHere": "Drop here"
+  },
+  "header": {
+    "newTask": "New Task",
+    "toggleView": "Toggle View",
+    "listView": "List View",
+    "boardView": "Board View"
+  }
+}
