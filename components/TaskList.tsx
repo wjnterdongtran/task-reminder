@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Task, TaskStatus, TASK_STATUS_LABELS } from '@/types/task';
+import { Task, TaskStatus } from '@/types/task';
+import { useTranslation } from '@/contexts/LanguageContext';
 import { TaskItem } from './TaskItem';
 
 interface TaskListProps {
@@ -13,8 +14,24 @@ interface TaskListProps {
 type FilterType = 'all' | TaskStatus;
 
 export function TaskList({ tasks, onStatusChange, onDelete }: TaskListProps) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const getStatusLabel = (status: TaskStatus): string => {
+    switch (status) {
+      case TaskStatus.INIT:
+        return t('taskStatus.init');
+      case TaskStatus.WORKING:
+        return t('taskStatus.working');
+      case TaskStatus.NEED_TAKING_CARE:
+        return t('taskStatus.needCare');
+      case TaskStatus.DONE:
+        return t('taskStatus.done');
+      default:
+        return '';
+    }
+  };
 
   const filteredTasks = useMemo(() => {
     let result = tasks;
@@ -57,60 +74,76 @@ export function TaskList({ tasks, onStatusChange, onDelete }: TaskListProps) {
     };
   }, [tasks]);
 
+  const filterButtons = [
+    { key: 'all', label: t('taskList.allTasks'), count: statusCounts.all },
+    { key: TaskStatus.INIT, label: getStatusLabel(TaskStatus.INIT), count: statusCounts[TaskStatus.INIT] },
+    { key: TaskStatus.WORKING, label: getStatusLabel(TaskStatus.WORKING), count: statusCounts[TaskStatus.WORKING] },
+    { key: TaskStatus.NEED_TAKING_CARE, label: getStatusLabel(TaskStatus.NEED_TAKING_CARE), count: statusCounts[TaskStatus.NEED_TAKING_CARE] },
+    { key: TaskStatus.DONE, label: getStatusLabel(TaskStatus.DONE), count: statusCounts[TaskStatus.DONE] },
+  ];
+
   return (
-    <div className="space-y-4">
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+    <div className="space-y-6">
+      {/* Search and Filter Bar */}
+      <div className="bg-slate-800/80 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-slate-700/50">
         <div className="mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tasks..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('taskList.searchPlaceholder')}
+              className="w-full pl-12 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg
+                         text-white placeholder-slate-500
+                         focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent
+                         transition-all duration-200"
+            />
+          </div>
         </div>
 
+        {/* Filter Buttons */}
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              filter === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            All ({statusCounts.all})
-          </button>
-          {([TaskStatus.INIT, TaskStatus.WORKING, TaskStatus.NEED_TAKING_CARE, TaskStatus.DONE] as const).map(
-            (status) => (
-              <button
-                key={status}
-                onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  filter === status
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {TASK_STATUS_LABELS[status]} ({statusCounts[status]})
-              </button>
-            )
-          )}
+          {filterButtons.map(({ key, label, count }) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key as FilterType)}
+              className={`
+                px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                ${
+                  filter === key
+                    ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25'
+                    : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 border border-slate-600/50'
+                }
+              `}
+            >
+              {label} <span className="opacity-75">({count})</span>
+            </button>
+          ))}
         </div>
       </div>
 
+      {/* Task List */}
       {filteredTasks.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <p className="text-gray-500 text-lg">
+        <div className="text-center py-16 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50">
+          <div className="mb-4 text-6xl opacity-20">📋</div>
+          <p className="text-slate-400 text-lg mb-2">
             {searchQuery
-              ? 'No tasks found matching your search'
+              ? t('taskList.noSearchResults')
               : filter === 'all'
-              ? 'No tasks yet. Add your first task above!'
-              : `No tasks with status "${TASK_STATUS_LABELS[filter as TaskStatus]}"`}
+              ? t('taskList.noTasks')
+              : `${t('taskList.noTasks')} - ${getStatusLabel(filter as TaskStatus)}`}
           </p>
+          {!searchQuery && filter === 'all' && (
+            <p className="text-slate-500 text-sm">{t('taskList.noTasksHint')}</p>
+          )}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filteredTasks.map((task) => (
             <TaskItem
               key={task.id}
