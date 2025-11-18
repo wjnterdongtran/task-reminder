@@ -43,11 +43,19 @@ The `reminder-automation.sql` migration sets up:
 
 #### How It Works
 
-1. Tasks in `WORKING` state are monitored by the database
-2. Every minute, pg_cron runs `check_and_update_task_reminders()`
-3. The function calculates time elapsed since `last_reminded_at` (or `created_at` if never reminded)
-4. If elapsed time ≥ `reminder_interval` hours, the task is updated to `NEED_TAKING_CARE` status
-5. When users view task details, the client resets the task to `WORKING` and updates `last_reminded_at`
+The reminder system tracks when users last **viewed** a task:
+
+1. **Field meaning**: `last_reminded_at` tracks when the user last viewed the task details (NOT when status changed)
+2. **Automatic check**: Every minute, pg_cron runs `check_and_update_task_reminders()`
+3. **Time calculation**: The function calculates time since user last viewed:
+   - If `last_reminded_at` exists: time since that timestamp
+   - If `last_reminded_at` is NULL: time since `created_at` (task never viewed)
+4. **Auto-transition**: If elapsed time ≥ `reminder_interval` hours, status changes: `WORKING` → `NEED_TAKING_CARE`
+5. **User acknowledgment**: When user clicks to view task details:
+   - Status resets to `WORKING`
+   - `last_reminded_at` updates to NOW() (restarts the countdown)
+
+**Example**: If a task has `reminder_interval = 24` hours and the user hasn't viewed it for 24 hours, it automatically becomes urgent (`NEED_TAKING_CARE`). Once the user views it, the timer resets.
 
 #### Testing the Reminder System
 

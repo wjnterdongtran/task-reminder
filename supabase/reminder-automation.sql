@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 -- Function to check and update tasks that need reminders
 -- This function will be called periodically by pg_cron
+-- Note: last_reminded_at tracks when user last VIEWED the task, not when status changed
 CREATE OR REPLACE FUNCTION check_and_update_task_reminders()
 RETURNS void
 LANGUAGE plpgsql
@@ -10,10 +11,10 @@ SECURITY DEFINER
 AS $$
 BEGIN
   -- Update tasks that are in WORKING state and have exceeded their reminder interval
+  -- We only change the status, NOT last_reminded_at (that's only updated when user views)
   UPDATE tasks
   SET
     status = 2, -- NEED_TAKING_CARE
-    last_reminded_at = NOW(),
     updated_at = NOW()
   WHERE
     status = 1 -- WORKING
@@ -22,7 +23,7 @@ BEGIN
       (last_reminded_at IS NOT NULL AND
        EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_interval)
       OR
-      -- If never reminded, check time since created_at
+      -- If never viewed (last_reminded_at is NULL), check time since created_at
       (last_reminded_at IS NULL AND
        EXTRACT(EPOCH FROM (NOW() - created_at)) / 3600 >= reminder_interval)
     );
@@ -51,14 +52,14 @@ DECLARE
   count_updated bigint;
 BEGIN
   -- Perform the update and count affected rows
+  -- Note: We only change status, NOT last_reminded_at (that tracks user views)
   WITH updated AS (
     UPDATE tasks
     SET
-      status = 2,
-      last_reminded_at = NOW(),
+      status = 2, -- NEED_TAKING_CARE
       updated_at = NOW()
     WHERE
-      status = 1
+      status = 1 -- WORKING
       AND (
         (last_reminded_at IS NOT NULL AND
          EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_interval)

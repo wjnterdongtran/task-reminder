@@ -154,28 +154,6 @@ export async function deleteTask(id: string): Promise<void> {
 }
 
 /**
- * Mark a task as reminded (updates status and lastRemindedAt)
- */
-export async function markTaskAsReminded(id: string): Promise<Task> {
-  const { data, error } = await supabase
-    .from('tasks')
-    .update({
-      status: TaskStatus.NEED_TAKING_CARE,
-      last_reminded_at: new Date().toISOString(),
-    })
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error marking task as reminded:', error);
-    throw new Error(`Failed to mark task as reminded: ${error.message}`);
-  }
-
-  return dbRowToTask(data);
-}
-
-/**
  * Reset task reminder (sets status to WORKING and resets lastRemindedAt)
  * Called when user views task details to acknowledge and restart the reminder timer
  */
