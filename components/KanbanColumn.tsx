@@ -11,6 +11,7 @@ interface KanbanColumnProps {
   color: 'amber' | 'cyan' | 'rose' | 'emerald';
   tasks: Task[];
   onDeleteTask: (taskId: string) => void;
+  onViewDetails?: (task: Task) => void;
 }
 
 const colorStyles = {
@@ -40,7 +41,7 @@ const colorStyles = {
   },
 };
 
-export default function KanbanColumn({ status, color, tasks, onDeleteTask }: KanbanColumnProps) {
+export default function KanbanColumn({ status, color, tasks, onDeleteTask, onViewDetails }: KanbanColumnProps) {
   const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({
     id: status,
@@ -64,13 +65,13 @@ export default function KanbanColumn({ status, color, tasks, onDeleteTask }: Kan
   const styles = colorStyles[color];
 
   return (
-    <div className="flex flex-col h-full min-h-[500px]">
+    <div className="flex flex-col h-full min-h-[600px]">
       {/* Column Header */}
       <div
         className={`
           bg-gradient-to-br ${styles.header}
           border rounded-t-xl px-4 py-3
-          backdrop-blur-sm
+          backdrop-blur-sm flex-shrink-0
         `}
       >
         <div className="flex items-center justify-between">
@@ -94,25 +95,30 @@ export default function KanbanColumn({ status, color, tasks, onDeleteTask }: Kan
         ref={setNodeRef}
         className={`
           flex-1 bg-slate-800/30 border-x border-b rounded-b-xl
-          transition-all duration-200 p-3 space-y-3
+          transition-all duration-200 p-3 space-y-3 min-h-[500px]
+          overflow-y-auto max-h-[calc(100vh-300px)]
           ${isOver ? `${styles.hover} ${styles.glow} shadow-2xl bg-slate-700/50` : 'border-slate-700/50'}
         `}
       >
         <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
           {tasks.length === 0 ? (
-            <div className="flex items-center justify-center h-32 text-slate-500 text-sm">
+            <div className="flex items-center justify-center h-full min-h-[200px] text-slate-500 text-sm">
               <div className="text-center">
                 <div className="mb-2 text-2xl opacity-30">·</div>
                 <div>{t('kanban.emptyColumn')}</div>
               </div>
             </div>
           ) : (
-            tasks.map((task) => <KanbanCard key={task.id} task={task} onDeleteTask={onDeleteTask} />)
+            <>
+              {tasks.map((task) => <KanbanCard key={task.id} task={task} onDeleteTask={onDeleteTask} onViewDetails={onViewDetails} />)}
+              {/* Extra space at bottom for dropping */}
+              <div className="min-h-[100px]"></div>
+            </>
           )}
         </SortableContext>
 
         {/* Drop Indicator */}
-        {isOver && (
+        {isOver && tasks.length > 0 && (
           <div
             className={`
               border-2 border-dashed rounded-lg p-4 text-center

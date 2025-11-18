@@ -9,11 +9,12 @@ interface TaskListProps {
   tasks: Task[];
   onStatusChange: (id: string, status: TaskStatus) => void;
   onDelete: (id: string) => void;
+  onViewDetails?: (task: Task) => void;
 }
 
 type FilterType = 'all' | TaskStatus;
 
-export function TaskList({ tasks, onStatusChange, onDelete }: TaskListProps) {
+export function TaskList({ tasks, onStatusChange, onDelete, onViewDetails }: TaskListProps) {
   const { t } = useTranslation();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -150,6 +151,7 @@ export function TaskList({ tasks, onStatusChange, onDelete }: TaskListProps) {
               task={task}
               onStatusChange={onStatusChange}
               onDelete={onDelete}
+              onViewDetails={onViewDetails}
             />
           ))}
         </div>

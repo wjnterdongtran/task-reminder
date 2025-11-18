@@ -21,6 +21,7 @@ interface KanbanBoardProps {
   tasks: Task[];
   onStatusChange: (taskId: string, newStatus: TaskStatus) => void;
   onDeleteTask: (taskId: string) => void;
+  onViewDetails?: (task: Task) => void;
 }
 
 const statusColumns = [
@@ -30,7 +31,7 @@ const statusColumns = [
   { status: TaskStatus.DONE, color: 'emerald' },
 ] as const;
 
-export default function KanbanBoard({ tasks, onStatusChange, onDeleteTask }: KanbanBoardProps) {
+export default function KanbanBoard({ tasks, onStatusChange, onDeleteTask, onViewDetails }: KanbanBoardProps) {
   const { t } = useTranslation();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -105,6 +106,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onDeleteTask }: Kan
                 color={color}
                 tasks={columnTasks}
                 onDeleteTask={onDeleteTask}
+                onViewDetails={onViewDetails}
               />
             );
           })}
