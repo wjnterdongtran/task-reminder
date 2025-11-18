@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       tasks: {
@@ -43,6 +43,7 @@ export interface Database {
           last_reminded_at?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: {
@@ -54,5 +55,8 @@ export interface Database {
     Enums: {
       [_ in never]: never;
     };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};
