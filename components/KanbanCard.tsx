@@ -57,11 +57,23 @@ export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetai
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
+      onClick={(e) => {
+        // Don't open details if clicking on interactive elements
+        const target = e.target as HTMLElement;
+        if (
+          target.closest('button') ||
+          target.closest('a') ||
+          target.closest('[data-drag-handle]')
+        ) {
+          return;
+        }
+        if (onViewDetails) {
+          onViewDetails(task);
+        }
+      }}
       className={`
         group bg-slate-800/80 backdrop-blur-sm border rounded-lg
-        transition-all duration-200 cursor-grab active:cursor-grabbing
+        transition-all duration-200 cursor-pointer
         hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5
         ${needsAttention
           ? 'border-rose-500/50 shadow-lg shadow-rose-500/20 ring-1 ring-rose-500/20'
@@ -71,10 +83,24 @@ export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetai
     >
       {/* Card Header */}
       <div className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-start gap-2 mb-2">
+          {/* Drag Handle */}
+          <div
+            {...attributes}
+            {...listeners}
+            data-drag-handle
+            className="flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-500 hover:text-slate-300 transition-colors pt-0.5"
+            title="Drag to move"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+            </svg>
+          </div>
+
           <h4 className="text-sm font-semibold text-white leading-snug flex-1 min-w-0">
             {task.name}
           </h4>
+
           {needsAttention && (
             <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 bg-rose-500/20 text-rose-300 text-xs font-bold rounded-full border border-rose-500/30 animate-pulse">
               <span className="w-1.5 h-1.5 bg-rose-400 rounded-full"></span>
@@ -169,21 +195,6 @@ export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetai
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </button>
-          )}
-          {onViewDetails && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onViewDetails(task);
-              }}
-              className="px-2 py-1 text-xs text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 rounded transition-all flex items-center gap-1"
-              title="View full details"
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
             </button>
           )}

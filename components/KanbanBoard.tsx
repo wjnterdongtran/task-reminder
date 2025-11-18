@@ -9,7 +9,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  closestCorners,
+  closestCenter,
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { Task, TaskStatus } from '@/types/task';
@@ -77,7 +77,16 @@ export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onD
 
       // If status changed, move to end of new column
       if (activeTask.status !== newStatus) {
-        onStatusChange(activeId, newStatus);
+        // Optimistic update: apply immediately then call the update function
+        const updatedTasks = tasks.map((t) =>
+          t.id === activeId ? { ...t, status: newStatus } : t
+        );
+        onReorderTasks(updatedTasks);
+
+        // Then update the status in the database
+        setTimeout(() => {
+          onStatusChange(activeId, newStatus);
+        }, 0);
       }
     } else {
       // Dropped over another task - handle reordering within same column
@@ -94,11 +103,23 @@ export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onD
         }
       } else if (overTask) {
         // Dragged over a task in a different column - move to end of that column
-        onStatusChange(activeId, overTask.status);
+        // Optimistic update: apply immediately then call the update function
+        const updatedTasks = tasks.map((t) =>
+          t.id === activeId ? { ...t, status: overTask.status } : t
+        );
+        onReorderTasks(updatedTasks);
+
+        // Then update the status in the database
+        setTimeout(() => {
+          onStatusChange(activeId, overTask.status);
+        }, 0);
       }
     }
 
-    setActiveTask(null);
+    // Delay clearing activeTask slightly to ensure smooth transition
+    setTimeout(() => {
+      setActiveTask(null);
+    }, 100);
   };
 
   const handleDragCancel = () => {
@@ -122,7 +143,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onD
       {/* Kanban Board */}
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
