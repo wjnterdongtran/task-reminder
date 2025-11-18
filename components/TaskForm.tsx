@@ -13,14 +13,16 @@ const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
 interface TaskFormProps {
   onSubmit: (data: TaskFormData) => void;
   onCancel?: () => void;
+  initialValues?: TaskFormData;
+  isEditMode?: boolean;
 }
 
-export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
+export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false }: TaskFormProps) {
   const { t } = useTranslation();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [url, setUrl] = useState('');
-  const [reminderInterval, setReminderInterval] = useState(24);
+  const [name, setName] = useState(initialValues?.name || '');
+  const [description, setDescription] = useState(initialValues?.description || '');
+  const [url, setUrl] = useState(initialValues?.url || '');
+  const [reminderInterval, setReminderInterval] = useState(initialValues?.reminderInterval || 24);
 
   const editorOptions = useMemo(() => {
     return {
@@ -63,11 +65,13 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
       reminderInterval,
     });
 
-    // Reset form
-    setName('');
-    setDescription('');
-    setUrl('');
-    setReminderInterval(24);
+    // Reset form only if not in edit mode
+    if (!isEditMode) {
+      setName('');
+      setDescription('');
+      setUrl('');
+      setReminderInterval(24);
+    }
   };
 
   return (
@@ -78,7 +82,7 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
       {/* Form Title */}
       <div className="border-b border-slate-700/50 pb-4 mb-6">
         <h2 className="text-2xl font-bold text-white font-mono tracking-tight">
-          {t('taskForm.title')}
+          {isEditMode ? t('taskForm.editTitle') : t('taskForm.title')}
         </h2>
       </div>
 
@@ -165,7 +169,7 @@ export function TaskForm({ onSubmit, onCancel }: TaskFormProps) {
                      transition-all duration-200 shadow-lg shadow-cyan-500/25
                      hover:shadow-xl hover:shadow-cyan-500/40 hover:scale-[1.02]"
         >
-          {t('taskForm.createTask')}
+          {isEditMode ? t('taskForm.updateTask') : t('taskForm.createTask')}
         </button>
         {onCancel && (
           <button

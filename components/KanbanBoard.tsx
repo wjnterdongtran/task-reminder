@@ -11,7 +11,7 @@ import {
   useSensors,
   closestCorners,
 } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { Task, TaskStatus } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
 import KanbanColumn from './KanbanColumn';
@@ -20,7 +20,9 @@ import KanbanCard from './KanbanCard';
 interface KanbanBoardProps {
   tasks: Task[];
   onStatusChange: (taskId: string, newStatus: TaskStatus) => void;
+  onReorderTasks: (tasks: Task[]) => void;
   onDeleteTask: (taskId: string) => void;
+  onEditTask?: (task: Task) => void;
   onViewDetails?: (task: Task) => void;
 }
 
@@ -31,7 +33,7 @@ const statusColumns = [
   { status: TaskStatus.DONE, color: 'emerald' },
 ] as const;
 
-export default function KanbanBoard({ tasks, onStatusChange, onDeleteTask, onViewDetails }: KanbanBoardProps) {
+export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onDeleteTask, onEditTask, onViewDetails }: KanbanBoardProps) {
   const { t } = useTranslation();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -59,12 +61,41 @@ export default function KanbanBoard({ tasks, onStatusChange, onDeleteTask, onVie
       return;
     }
 
-    const taskId = active.id as string;
-    const newStatus = over.id as TaskStatus;
+    const activeId = active.id as string;
+    const overId = over.id;
 
-    // Check if dropped over a valid status column
-    if (Object.values(TaskStatus).includes(newStatus)) {
-      onStatusChange(taskId, newStatus);
+    // Find the active task
+    const activeTask = tasks.find((t) => t.id === activeId);
+    if (!activeTask) {
+      setActiveTask(null);
+      return;
+    }
+
+    // Check if dropped over a column (status)
+    if (Object.values(TaskStatus).includes(overId as TaskStatus)) {
+      const newStatus = overId as TaskStatus;
+
+      // If status changed, move to end of new column
+      if (activeTask.status !== newStatus) {
+        onStatusChange(activeId, newStatus);
+      }
+    } else {
+      // Dropped over another task - handle reordering within same column
+      const overTask = tasks.find((t) => t.id === overId);
+
+      if (overTask && activeTask.status === overTask.status) {
+        // Reordering within the same column
+        const oldIndex = tasks.findIndex((t) => t.id === activeId);
+        const newIndex = tasks.findIndex((t) => t.id === overId);
+
+        if (oldIndex !== newIndex) {
+          const reorderedTasks = arrayMove(tasks, oldIndex, newIndex);
+          onReorderTasks(reorderedTasks);
+        }
+      } else if (overTask) {
+        // Dragged over a task in a different column - move to end of that column
+        onStatusChange(activeId, overTask.status);
+      }
     }
 
     setActiveTask(null);
@@ -106,6 +137,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onDeleteTask, onVie
                 color={color}
                 tasks={columnTasks}
                 onDeleteTask={onDeleteTask}
+                onEditTask={onEditTask}
                 onViewDetails={onViewDetails}
               />
             );

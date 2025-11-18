@@ -89,6 +89,10 @@ export function useTasks() {
     );
   }, []);
 
+  const setAllTasks = useCallback((newTasks: Task[]) => {
+    setTasks(newTasks);
+  }, []);
+
   return {
     tasks,
     isLoaded,
@@ -97,5 +101,6 @@ export function useTasks() {
     updateTaskStatus,
     deleteTask,
     markAsReminded,
+    setAllTasks,
   };
 }
