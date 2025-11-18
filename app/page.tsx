@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
-import { useTaskReminder } from '@/hooks/useTaskReminder';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { TaskForm } from '@/components/TaskForm';
@@ -12,7 +11,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import TaskDetailModal from '@/components/TaskDetailModal';
 import { MigrationHelper } from '@/components/MigrationHelper';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { TaskFormData, Task } from '@/types/task';
+import { TaskFormData, Task, TaskStatus } from '@/types/task';
 
 type ViewMode = 'board' | 'list';
 
@@ -23,10 +22,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('board');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, markAsReminded, setAllTasks } = useTasks();
-
-  // Set up automatic reminder checking
-  useTaskReminder({ tasks, markAsReminded, isLoaded });
+  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, resetTaskReminder, setAllTasks } = useTasks();
 
   const handleAddTask = async (data: TaskFormData) => {
     try {
@@ -69,7 +65,15 @@ export default function Home() {
     setAllTasks(reorderedTasks);
   };
 
-  const handleViewDetails = (task: Task) => {
+  const handleViewDetails = async (task: Task) => {
+    // If task is WORKING or NEED_TAKING_CARE, reset it to WORKING and restart the timer
+    if (task.status === TaskStatus.WORKING || task.status === TaskStatus.NEED_TAKING_CARE) {
+      try {
+        await resetTaskReminder(task.id);
+      } catch (error) {
+        console.error('Failed to reset task reminder:', error);
+      }
+    }
     setSelectedTask(task);
   };
 
