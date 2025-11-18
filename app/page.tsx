@@ -8,7 +8,8 @@ import { TaskForm } from '@/components/TaskForm';
 import { TaskList } from '@/components/TaskList';
 import KanbanBoard from '@/components/KanbanBoard';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { TaskFormData } from '@/types/task';
+import TaskDetailModal from '@/components/TaskDetailModal';
+import { TaskFormData, Task } from '@/types/task';
 
 type ViewMode = 'board' | 'list';
 
@@ -16,6 +17,7 @@ export default function Home() {
   const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('board');
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { tasks, isLoaded, addTask, updateTaskStatus, deleteTask, markAsReminded } = useTasks();
 
   // Set up automatic reminder checking
@@ -24,6 +26,14 @@ export default function Home() {
   const handleAddTask = (data: TaskFormData) => {
     addTask(data);
     setShowForm(false);
+  };
+
+  const handleViewDetails = (task: Task) => {
+    setSelectedTask(task);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTask(null);
   };
 
   if (!isLoaded) {
@@ -140,15 +150,26 @@ export default function Home() {
               tasks={tasks}
               onStatusChange={updateTaskStatus}
               onDeleteTask={deleteTask}
+              onViewDetails={handleViewDetails}
             />
           ) : (
             <TaskList
               tasks={tasks}
               onStatusChange={updateTaskStatus}
               onDelete={deleteTask}
+              onViewDetails={handleViewDetails}
             />
           )}
         </div>
+
+        {/* Task Detail Modal */}
+        <TaskDetailModal
+          task={selectedTask}
+          isOpen={!!selectedTask}
+          onClose={handleCloseModal}
+          onStatusChange={updateTaskStatus}
+          onDelete={deleteTask}
+        />
       </div>
     </div>
   );
