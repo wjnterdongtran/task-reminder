@@ -4,17 +4,21 @@ import { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { useTaskReminder } from '@/hooks/useTaskReminder';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { TaskForm } from '@/components/TaskForm';
 import { TaskList } from '@/components/TaskList';
 import KanbanBoard from '@/components/KanbanBoard';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import TaskDetailModal from '@/components/TaskDetailModal';
+import { MigrationHelper } from '@/components/MigrationHelper';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { TaskFormData, Task } from '@/types/task';
 
 type ViewMode = 'board' | 'list';
 
 export default function Home() {
   const { t } = useTranslation();
+  const { user, signOut } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('board');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -24,9 +28,14 @@ export default function Home() {
   // Set up automatic reminder checking
   useTaskReminder({ tasks, markAsReminded, isLoaded });
 
-  const handleAddTask = (data: TaskFormData) => {
-    addTask(data);
-    setShowForm(false);
+  const handleAddTask = async (data: TaskFormData) => {
+    try {
+      await addTask(data);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Failed to add task:', error);
+      // Could add user-facing error handling here
+    }
   };
 
   const handleEditTask = (task: Task) => {
@@ -34,15 +43,20 @@ export default function Home() {
     setShowForm(false);
   };
 
-  const handleUpdateTask = (data: TaskFormData) => {
+  const handleUpdateTask = async (data: TaskFormData) => {
     if (editingTask) {
-      updateTask(editingTask.id, {
-        name: data.name,
-        description: data.description,
-        url: data.url,
-        reminderInterval: data.reminderInterval,
-      });
-      setEditingTask(null);
+      try {
+        await updateTask(editingTask.id, {
+          name: data.name,
+          description: data.description,
+          url: data.url,
+          reminderInterval: data.reminderInterval,
+        });
+        setEditingTask(null);
+      } catch (error) {
+        console.error('Failed to update task:', error);
+        // Could add user-facing error handling here
+      }
     }
   };
 
@@ -74,9 +88,19 @@ export default function Home() {
     );
   }
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <ProtectedRoute>
+      <div className="min-h-screen">
+        <MigrationHelper />
+        <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8 animate-slide-up">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
@@ -90,6 +114,23 @@ export default function Home() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
+              {/* User Info & Sign Out */}
+              <div className="flex items-center gap-3 px-4 py-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                <div className="text-sm">
+                  <span className="text-slate-400">Signed in as:</span>{' '}
+                  <span className="text-cyan-400">{user?.email}</span>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="text-slate-400 hover:text-red-400 transition-colors text-sm"
+                  title="Sign out"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+
               {/* Language Switcher */}
               <LanguageSwitcher />
 
@@ -218,5 +259,6 @@ export default function Home() {
         />
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -2,91 +2,110 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Task, TaskStatus, TaskFormData } from '@/types/task';
-
-const STORAGE_KEY = 'task-reminder-tasks';
+import * as taskService from '@/lib/supabase/taskService';
 
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load tasks from localStorage
+  // Load tasks from Supabase on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setTasks(parsed);
-        } catch (error) {
-          console.error('Error parsing tasks from localStorage:', error);
-          setTasks([]);
-        }
+    const loadTasks = async () => {
+      try {
+        const fetchedTasks = await taskService.getAllTasks();
+        setTasks(fetchedTasks);
+        setIsLoaded(true);
+      } catch (err) {
+        console.error('Error loading tasks:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load tasks');
+        setIsLoaded(true);
       }
-      setIsLoaded(true);
-    }
-  }, []);
-
-  // Save tasks to localStorage whenever they change
-  useEffect(() => {
-    if (isLoaded && typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    }
-  }, [tasks, isLoaded]);
-
-  const addTask = useCallback((formData: TaskFormData) => {
-    const newTask: Task = {
-      id: crypto.randomUUID(),
-      name: formData.name,
-      description: formData.description,
-      url: formData.url,
-      status: TaskStatus.INIT,
-      reminderInterval: formData.reminderInterval,
-      createdAt: new Date().toISOString(),
-      lastRemindedAt: null,
-      updatedAt: new Date().toISOString(),
     };
 
-    setTasks((prev) => [...prev, newTask]);
-    return newTask;
+    loadTasks();
   }, []);
 
-  const updateTask = useCallback((id: string, updates: Partial<Task>) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id
-          ? { ...task, ...updates, updatedAt: new Date().toISOString() }
-          : task
-      )
-    );
+  // Subscribe to real-time updates
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const unsubscribe = taskService.subscribeToTasks((updatedTasks) => {
+      setTasks(updatedTasks);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [isLoaded]);
+
+  const addTask = useCallback(async (formData: TaskFormData) => {
+    try {
+      const newTask = await taskService.createTask(formData);
+      setTasks((prev) => [newTask, ...prev]);
+      return newTask;
+    } catch (err) {
+      console.error('Error adding task:', err);
+      setError(err instanceof Error ? err.message : 'Failed to add task');
+      throw err;
+    }
   }, []);
 
-  const updateTaskStatus = useCallback((id: string, status: TaskStatus) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id
-          ? { ...task, status, updatedAt: new Date().toISOString() }
-          : task
-      )
-    );
+  const updateTask = useCallback(async (id: string, updates: Partial<Task>) => {
+    try {
+      const updatedTask = await taskService.updateTask(id, updates);
+      setTasks((prev) =>
+        prev.map((task) => (task.id === id ? updatedTask : task))
+      );
+    } catch (err) {
+      console.error('Error updating task:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update task');
+      throw err;
+    }
   }, []);
 
-  const deleteTask = useCallback((id: string) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+  const updateTaskStatus = useCallback(
+    async (id: string, status: TaskStatus) => {
+      try {
+        const updatedTask = await taskService.updateTaskStatus(id, status);
+        setTasks((prev) =>
+          prev.map((task) => (task.id === id ? updatedTask : task))
+        );
+      } catch (err) {
+        console.error('Error updating task status:', err);
+        setError(
+          err instanceof Error ? err.message : 'Failed to update task status'
+        );
+        throw err;
+      }
+    },
+    []
+  );
+
+  const deleteTask = useCallback(async (id: string) => {
+    try {
+      await taskService.deleteTask(id);
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (err) {
+      console.error('Error deleting task:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete task');
+      throw err;
+    }
   }, []);
 
-  const markAsReminded = useCallback((id: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status: TaskStatus.NEED_TAKING_CARE,
-              lastRemindedAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            }
-          : task
-      )
-    );
+  const markAsReminded = useCallback(async (id: string) => {
+    try {
+      const updatedTask = await taskService.markTaskAsReminded(id);
+      setTasks((prev) =>
+        prev.map((task) => (task.id === id ? updatedTask : task))
+      );
+    } catch (err) {
+      console.error('Error marking task as reminded:', err);
+      setError(
+        err instanceof Error ? err.message : 'Failed to mark task as reminded'
+      );
+      throw err;
+    }
   }, []);
 
   const setAllTasks = useCallback((newTasks: Task[]) => {
@@ -96,6 +115,7 @@ export function useTasks() {
   return {
     tasks,
     isLoaded,
+    error,
     addTask,
     updateTask,
     updateTaskStatus,
