@@ -9,6 +9,7 @@ import { TaskList } from '@/components/TaskList';
 import KanbanBoard from '@/components/KanbanBoard';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import TaskDetailModal from '@/components/TaskDetailModal';
+import { MigrationHelper } from '@/components/MigrationHelper';
 import { TaskFormData, Task } from '@/types/task';
 
 type ViewMode = 'board' | 'list';
@@ -24,9 +25,14 @@ export default function Home() {
   // Set up automatic reminder checking
   useTaskReminder({ tasks, markAsReminded, isLoaded });
 
-  const handleAddTask = (data: TaskFormData) => {
-    addTask(data);
-    setShowForm(false);
+  const handleAddTask = async (data: TaskFormData) => {
+    try {
+      await addTask(data);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Failed to add task:', error);
+      // Could add user-facing error handling here
+    }
   };
 
   const handleEditTask = (task: Task) => {
@@ -34,15 +40,20 @@ export default function Home() {
     setShowForm(false);
   };
 
-  const handleUpdateTask = (data: TaskFormData) => {
+  const handleUpdateTask = async (data: TaskFormData) => {
     if (editingTask) {
-      updateTask(editingTask.id, {
-        name: data.name,
-        description: data.description,
-        url: data.url,
-        reminderInterval: data.reminderInterval,
-      });
-      setEditingTask(null);
+      try {
+        await updateTask(editingTask.id, {
+          name: data.name,
+          description: data.description,
+          url: data.url,
+          reminderInterval: data.reminderInterval,
+        });
+        setEditingTask(null);
+      } catch (error) {
+        console.error('Failed to update task:', error);
+        // Could add user-facing error handling here
+      }
     }
   };
 
@@ -76,6 +87,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <MigrationHelper />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8 animate-slide-up">
