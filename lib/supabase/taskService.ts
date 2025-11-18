@@ -176,6 +176,29 @@ export async function markTaskAsReminded(id: string): Promise<Task> {
 }
 
 /**
+ * Reset task reminder (sets status to WORKING and resets lastRemindedAt)
+ * Called when user views task details to acknowledge and restart the reminder timer
+ */
+export async function resetTaskReminder(id: string): Promise<Task> {
+  const { data, error } = await supabase
+    .from('tasks')
+    .update({
+      status: TaskStatus.WORKING,
+      last_reminded_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error resetting task reminder:', error);
+    throw new Error(`Failed to reset task reminder: ${error.message}`);
+  }
+
+  return dbRowToTask(data);
+}
+
+/**
  * Subscribe to task changes (real-time updates)
  */
 export function subscribeToTasks(

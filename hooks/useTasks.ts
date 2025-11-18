@@ -108,6 +108,21 @@ export function useTasks() {
     }
   }, []);
 
+  const resetTaskReminder = useCallback(async (id: string) => {
+    try {
+      const updatedTask = await taskService.resetTaskReminder(id);
+      setTasks((prev) =>
+        prev.map((task) => (task.id === id ? updatedTask : task))
+      );
+    } catch (err) {
+      console.error('Error resetting task reminder:', err);
+      setError(
+        err instanceof Error ? err.message : 'Failed to reset task reminder'
+      );
+      throw err;
+    }
+  }, []);
+
   const setAllTasks = useCallback((newTasks: Task[]) => {
     setTasks(newTasks);
   }, []);
@@ -121,6 +136,7 @@ export function useTasks() {
     updateTaskStatus,
     deleteTask,
     markAsReminded,
+    resetTaskReminder,
     setAllTasks,
   };
 }

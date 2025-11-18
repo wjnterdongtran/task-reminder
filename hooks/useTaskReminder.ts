@@ -18,8 +18,8 @@ export function useTaskReminder({ tasks, markAsReminded, isLoaded }: UseTaskRemi
       const now = new Date();
 
       tasks.forEach((task) => {
-        // Only check tasks that are not done
-        if (task.status === TaskStatus.DONE) {
+        // Only check tasks that are in WORKING state
+        if (task.status !== TaskStatus.WORKING) {
           return;
         }
 
