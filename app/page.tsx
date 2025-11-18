@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
-import { useTaskReminder } from '@/hooks/useTaskReminder';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { TaskForm } from '@/components/TaskForm';
@@ -23,10 +22,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('board');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, markAsReminded, resetTaskReminder, setAllTasks } = useTasks();
-
-  // Set up automatic reminder checking
-  useTaskReminder({ tasks, markAsReminded, isLoaded });
+  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, resetTaskReminder, setAllTasks } = useTasks();
 
   const handleAddTask = async (data: TaskFormData) => {
     try {

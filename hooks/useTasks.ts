@@ -93,21 +93,6 @@ export function useTasks() {
     }
   }, []);
 
-  const markAsReminded = useCallback(async (id: string) => {
-    try {
-      const updatedTask = await taskService.markTaskAsReminded(id);
-      setTasks((prev) =>
-        prev.map((task) => (task.id === id ? updatedTask : task))
-      );
-    } catch (err) {
-      console.error('Error marking task as reminded:', err);
-      setError(
-        err instanceof Error ? err.message : 'Failed to mark task as reminded'
-      );
-      throw err;
-    }
-  }, []);
-
   const resetTaskReminder = useCallback(async (id: string) => {
     try {
       const updatedTask = await taskService.resetTaskReminder(id);
@@ -135,7 +120,6 @@ export function useTasks() {
     updateTask,
     updateTaskStatus,
     deleteTask,
-    markAsReminded,
     resetTaskReminder,
     setAllTasks,
   };
