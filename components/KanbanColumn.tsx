@@ -51,6 +51,8 @@ export default function KanbanColumn({ status, color, tasks, onDeleteTask, onEdi
 
   const getStatusLabel = (status: TaskStatus): string => {
     switch (status) {
+      case TaskStatus.INIT:
+        return t('taskStatus.init');
       case TaskStatus.WORKING:
         return t('taskStatus.working');
       case TaskStatus.NEED_TAKING_CARE:

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
   -- Add constraints
-  CONSTRAINT valid_status CHECK (status IN (0, 1, 2)),
+  CONSTRAINT valid_status CHECK (status IN (0, 1, 2, 3)),
   CONSTRAINT valid_reminder_interval CHECK (reminder_interval > 0)
 );
 
@@ -64,7 +64,7 @@ COMMENT ON COLUMN tasks.id IS 'Unique identifier for the task';
 COMMENT ON COLUMN tasks.name IS 'Task name/title';
 COMMENT ON COLUMN tasks.description IS 'Task description in markdown format';
 COMMENT ON COLUMN tasks.url IS 'Optional URL (e.g., Jira link)';
-COMMENT ON COLUMN tasks.status IS 'Task status: 0=WORKING, 1=NEED_TAKING_CARE, 2=DONE';
+COMMENT ON COLUMN tasks.status IS 'Task status: 0=INIT, 1=WORKING, 2=NEED_TAKING_CARE, 3=DONE';
 COMMENT ON COLUMN tasks.reminder_interval IS 'Reminder interval in hours';
 COMMENT ON COLUMN tasks.created_at IS 'Timestamp when task was created';
 COMMENT ON COLUMN tasks.last_reminded_at IS 'Timestamp of last reminder trigger';

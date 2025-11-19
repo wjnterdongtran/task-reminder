@@ -11,6 +11,7 @@
     "filter": "Filter"
   },
   "taskStatus": {
+    "init": "To Do",
     "working": "In Progress",
     "needCare": "Needs Attention",
     "done": "Completed"

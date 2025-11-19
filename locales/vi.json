@@ -11,6 +11,7 @@
     "filter": "Lọc"
   },
   "taskStatus": {
+    "init": "Cần Làm",
     "working": "Đang Làm",
     "needCare": "Cần Chú Ý",
     "done": "Hoàn Thành"
