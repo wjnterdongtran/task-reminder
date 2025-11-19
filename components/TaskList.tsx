@@ -24,8 +24,6 @@ export function TaskList({ tasks, onStatusChange, onDelete, onViewDetails, onTog
 
   const getStatusLabel = (status: TaskStatus): string => {
     switch (status) {
-      case TaskStatus.INIT:
-        return t('taskStatus.init');
       case TaskStatus.WORKING:
         return t('taskStatus.working');
       case TaskStatus.NEED_TAKING_CARE:
@@ -97,7 +95,6 @@ export function TaskList({ tasks, onStatusChange, onDelete, onViewDetails, onTog
   const statusCounts = useMemo(() => {
     return {
       all: tasks.length,
-      [TaskStatus.INIT]: tasks.filter((t) => t.status === TaskStatus.INIT).length,
       [TaskStatus.WORKING]: tasks.filter((t) => t.status === TaskStatus.WORKING).length,
       [TaskStatus.NEED_TAKING_CARE]: tasks.filter((t) => t.status === TaskStatus.NEED_TAKING_CARE).length,
       [TaskStatus.DONE]: tasks.filter((t) => t.status === TaskStatus.DONE).length,
@@ -118,7 +115,6 @@ export function TaskList({ tasks, onStatusChange, onDelete, onViewDetails, onTog
 
   const filterButtons = [
     { key: 'all', label: t('taskList.allTasks'), count: statusCounts.all },
-    { key: TaskStatus.INIT, label: getStatusLabel(TaskStatus.INIT), count: statusCounts[TaskStatus.INIT] },
     { key: TaskStatus.WORKING, label: getStatusLabel(TaskStatus.WORKING), count: statusCounts[TaskStatus.WORKING] },
     { key: TaskStatus.NEED_TAKING_CARE, label: getStatusLabel(TaskStatus.NEED_TAKING_CARE), count: statusCounts[TaskStatus.NEED_TAKING_CARE] },
     { key: TaskStatus.DONE, label: getStatusLabel(TaskStatus.DONE), count: statusCounts[TaskStatus.DONE] },

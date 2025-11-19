@@ -30,7 +30,7 @@ function taskToDbInsert(formData: TaskFormData) {
     name: formData.name,
     description: formData.description || '',
     url: formData.url || '',
-    status: TaskStatus.INIT,
+    status: TaskStatus.WORKING,
     reminder_interval: formData.reminderInterval,
     color: formData.color || null,
     is_pinned: false,

@@ -14,10 +14,10 @@ BEGIN
   -- We only change the status, NOT last_reminded_at (that's only updated when user views)
   UPDATE tasks
   SET
-    status = 2, -- NEED_TAKING_CARE
+    status = 1, -- NEED_TAKING_CARE
     updated_at = NOW()
   WHERE
-    status = 1 -- WORKING
+    status = 0 -- WORKING
     AND (
       -- Check if time since last_reminded_at exceeds reminder_interval
       (last_reminded_at IS NOT NULL AND
@@ -57,10 +57,10 @@ BEGIN
   WITH updated AS (
     UPDATE tasks
     SET
-      status = 2, -- NEED_TAKING_CARE
+      status = 1, -- NEED_TAKING_CARE
       updated_at = NOW()
     WHERE
-      status = 1 -- WORKING
+      status = 0 -- WORKING
       AND (
         (last_reminded_at IS NOT NULL AND
          EXTRACT(EPOCH FROM (NOW() - last_reminded_at)) / 3600 >= reminder_interval)

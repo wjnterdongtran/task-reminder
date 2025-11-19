@@ -47,8 +47,6 @@ export default function TaskDetailModal({
 
   const getStatusLabel = (status: TaskStatus): string => {
     switch (status) {
-      case TaskStatus.INIT:
-        return t('taskStatus.init');
       case TaskStatus.WORKING:
         return t('taskStatus.working');
       case TaskStatus.NEED_TAKING_CARE:
@@ -62,8 +60,6 @@ export default function TaskDetailModal({
 
   const getStatusColor = (status: TaskStatus) => {
     switch (status) {
-      case TaskStatus.INIT:
-        return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
       case TaskStatus.WORKING:
         return 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
       case TaskStatus.NEED_TAKING_CARE:
@@ -229,7 +225,6 @@ export default function TaskDetailModal({
                          focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent
                          transition-all duration-200 cursor-pointer hover:bg-slate-700"
             >
-              <option value={TaskStatus.INIT}>{getStatusLabel(TaskStatus.INIT)}</option>
               <option value={TaskStatus.WORKING}>{getStatusLabel(TaskStatus.WORKING)}</option>
               <option value={TaskStatus.NEED_TAKING_CARE}>{getStatusLabel(TaskStatus.NEED_TAKING_CARE)}</option>
               <option value={TaskStatus.DONE}>{getStatusLabel(TaskStatus.DONE)}</option>
