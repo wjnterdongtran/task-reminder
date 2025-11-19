@@ -108,6 +108,21 @@ export function useTasks() {
     }
   }, []);
 
+  const toggleTaskPin = useCallback(async (id: string, isPinned: boolean) => {
+    try {
+      const updatedTask = await taskService.toggleTaskPin(id, isPinned);
+      setTasks((prev) =>
+        prev.map((task) => (task.id === id ? updatedTask : task))
+      );
+    } catch (err) {
+      console.error('Error toggling task pin:', err);
+      setError(
+        err instanceof Error ? err.message : 'Failed to toggle task pin'
+      );
+      throw err;
+    }
+  }, []);
+
   const setAllTasks = useCallback((newTasks: Task[]) => {
     setTasks(newTasks);
   }, []);
@@ -121,6 +136,7 @@ export function useTasks() {
     updateTaskStatus,
     deleteTask,
     resetTaskReminder,
+    toggleTaskPin,
     setAllTasks,
   };
 }

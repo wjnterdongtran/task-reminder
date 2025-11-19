@@ -18,6 +18,9 @@ function dbRowToTask(row: any): Task {
     createdAt: row.created_at,
     lastRemindedAt: row.last_reminded_at,
     updatedAt: row.updated_at,
+    color: row.color || undefined,
+    isPinned: row.is_pinned || false,
+    pinnedAt: row.pinned_at || null,
   };
 }
 
@@ -29,6 +32,9 @@ function taskToDbInsert(formData: TaskFormData) {
     url: formData.url || '',
     status: TaskStatus.INIT,
     reminder_interval: formData.reminderInterval,
+    color: formData.color || null,
+    is_pinned: false,
+    pinned_at: null,
   };
 }
 
@@ -103,6 +109,9 @@ export async function updateTask(
     dbUpdates.reminder_interval = updates.reminderInterval;
   if (updates.lastRemindedAt !== undefined)
     dbUpdates.last_reminded_at = updates.lastRemindedAt;
+  if (updates.color !== undefined) dbUpdates.color = updates.color;
+  if (updates.isPinned !== undefined) dbUpdates.is_pinned = updates.isPinned;
+  if (updates.pinnedAt !== undefined) dbUpdates.pinned_at = updates.pinnedAt;
 
   const { data, error } = await supabase
     .from('tasks')
@@ -171,6 +180,28 @@ export async function resetTaskReminder(id: string): Promise<Task> {
   if (error) {
     console.error('Error resetting task reminder:', error);
     throw new Error(`Failed to reset task reminder: ${error.message}`);
+  }
+
+  return dbRowToTask(data);
+}
+
+/**
+ * Toggle task pin status
+ */
+export async function toggleTaskPin(id: string, isPinned: boolean): Promise<Task> {
+  const { data, error } = await supabase
+    .from('tasks')
+    .update({
+      is_pinned: isPinned,
+      pinned_at: isPinned ? new Date().toISOString() : null,
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error toggling task pin:', error);
+    throw new Error(`Failed to toggle task pin: ${error.message}`);
   }
 
   return dbRowToTask(data);
