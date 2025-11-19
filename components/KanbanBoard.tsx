@@ -24,6 +24,7 @@ interface KanbanBoardProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask?: (task: Task) => void;
   onViewDetails?: (task: Task) => void;
+  onTogglePin?: (taskId: string, isPinned: boolean) => void;
 }
 
 const statusColumns = [
@@ -33,7 +34,7 @@ const statusColumns = [
   { status: TaskStatus.DONE, color: 'emerald' },
 ] as const;
 
-export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onDeleteTask, onEditTask, onViewDetails }: KanbanBoardProps) {
+export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onDeleteTask, onEditTask, onViewDetails, onTogglePin }: KanbanBoardProps) {
   const { t } = useTranslation();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -127,7 +128,23 @@ export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onD
   };
 
   const getTasksByStatus = (status: TaskStatus) => {
-    return tasks.filter((task) => task.status === status);
+    const filtered = tasks.filter((task) => task.status === status);
+    // Sort: Pinned tasks first, then by pinned time, then by updated time
+    return filtered.sort((a, b) => {
+      // Pinned tasks always come first
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+
+      // If both pinned, sort by pinnedAt (most recently pinned first)
+      if (a.isPinned && b.isPinned) {
+        const aPinnedTime = a.pinnedAt ? new Date(a.pinnedAt).getTime() : 0;
+        const bPinnedTime = b.pinnedAt ? new Date(b.pinnedAt).getTime() : 0;
+        return bPinnedTime - aPinnedTime;
+      }
+
+      // Finally by updatedAt
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
   };
 
   return (
@@ -160,6 +177,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onReorderTasks, onD
                 onDeleteTask={onDeleteTask}
                 onEditTask={onEditTask}
                 onViewDetails={onViewDetails}
+                onTogglePin={onTogglePin}
               />
             );
           })}

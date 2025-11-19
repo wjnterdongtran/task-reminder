@@ -21,6 +21,9 @@ export type Database = {
           last_reminded_at: string | null;
           updated_at: string;
           user_id: string | null;
+          color: string | null;
+          is_pinned: boolean;
+          pinned_at: string | null;
         };
         Insert: {
           id?: string;
@@ -33,6 +36,9 @@ export type Database = {
           last_reminded_at?: string | null;
           updated_at?: string;
           user_id?: string | null;
+          color?: string | null;
+          is_pinned?: boolean;
+          pinned_at?: string | null;
         };
         Update: {
           id?: string;
@@ -45,6 +51,9 @@ export type Database = {
           last_reminded_at?: string | null;
           updated_at?: string;
           user_id?: string | null;
+          color?: string | null;
+          is_pinned?: boolean;
+          pinned_at?: string | null;
         };
         Relationships: [
           {

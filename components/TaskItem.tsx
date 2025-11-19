@@ -11,9 +11,10 @@ interface TaskItemProps {
   onStatusChange: (id: string, status: TaskStatus) => void;
   onDelete: (id: string) => void;
   onViewDetails?: (task: Task) => void;
+  onTogglePin?: (taskId: string, isPinned: boolean) => void;
 }
 
-export function TaskItem({ task, onStatusChange, onDelete, onViewDetails }: TaskItemProps) {
+export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogglePin }: TaskItemProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -79,7 +80,17 @@ export function TaskItem({ task, onStatusChange, onDelete, onViewDetails }: Task
         <div className="flex-1 min-w-0">
           {/* Task Header */}
           <div className="flex items-center gap-2 mb-3">
-            <h3 className="text-xl font-bold text-white truncate">
+            {task.isPinned && (
+              <span className="flex-shrink-0 text-amber-400" title="Pinned">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M16,9V4H17V2H7V4H8V9C8,10.66 6.66,12 5,12V14H11V22H13V14H19V12C17.34,12 16,10.66 16,9Z" />
+                </svg>
+              </span>
+            )}
+            <h3
+              className="text-xl font-bold truncate"
+              style={{ color: task.color || 'white' }}
+            >
               {task.name}
             </h3>
             {needsAttention && (
@@ -154,6 +165,29 @@ export function TaskItem({ task, onStatusChange, onDelete, onViewDetails }: Task
 
         {/* Actions Column */}
         <div className="flex flex-col gap-3 items-end flex-shrink-0">
+          {/* Pin Button */}
+          {onTogglePin && (
+            <button
+              onClick={() => onTogglePin(task.id, !task.isPinned)}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                         flex items-center gap-2
+                         ${task.isPinned
+                           ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30'
+                           : 'bg-slate-700/50 text-slate-400 hover:bg-slate-600/50 border border-slate-600'
+                         }`}
+              title={task.isPinned ? 'Unpin task' : 'Pin task to top'}
+            >
+              <svg className="w-4 h-4" fill={task.isPinned ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+                {task.isPinned ? (
+                  <path d="M16,9V4H17V2H7V4H8V9C8,10.66 6.66,12 5,12V14H11V22H13V14H19V12C17.34,12 16,10.66 16,9Z" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                )}
+              </svg>
+              <span className="hidden sm:inline">{task.isPinned ? 'Unpin' : 'Pin'}</span>
+            </button>
+          )}
+
           {/* Status Selector */}
           <select
             value={task.status}

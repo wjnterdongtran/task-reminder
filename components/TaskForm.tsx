@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { TaskFormData } from '@/types/task';
+import { TaskFormData, TASK_PRESET_COLORS } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
 import 'easymde/dist/easymde.min.css';
 
@@ -23,6 +23,7 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
   const [description, setDescription] = useState(initialValues?.description || '');
   const [url, setUrl] = useState(initialValues?.url || '');
   const [reminderInterval, setReminderInterval] = useState(initialValues?.reminderInterval || 24);
+  const [color, setColor] = useState(initialValues?.color || '');
 
   const editorOptions = useMemo(() => {
     return {
@@ -63,6 +64,7 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
       description: description.trim(),
       url: url.trim(),
       reminderInterval,
+      color: color || undefined,
     });
 
     // Reset form only if not in edit mode
@@ -71,6 +73,7 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
       setDescription('');
       setUrl('');
       setReminderInterval(24);
+      setColor('');
     }
   };
 
@@ -135,6 +138,41 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
                      transition-all duration-200"
           placeholder={t('taskForm.urlPlaceholder')}
         />
+      </div>
+
+      {/* Color Picker */}
+      <div>
+        <label className="block text-sm font-semibold text-slate-200 mb-2">
+          Priority Color
+        </label>
+        <div className="flex gap-3 items-center">
+          {TASK_PRESET_COLORS.map((presetColor) => (
+            <button
+              key={presetColor.value}
+              type="button"
+              onClick={() => setColor(color === presetColor.value ? '' : presetColor.value)}
+              className={`w-10 h-10 rounded-lg transition-all duration-200 ${
+                color === presetColor.value
+                  ? 'ring-2 ring-offset-2 ring-offset-slate-800 ring-white scale-110'
+                  : 'hover:scale-105'
+              }`}
+              style={{ backgroundColor: presetColor.value }}
+              title={presetColor.name}
+            />
+          ))}
+          {color && (
+            <button
+              type="button"
+              onClick={() => setColor('')}
+              className="text-slate-400 hover:text-slate-200 text-sm underline ml-2"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-slate-400 mt-2">
+          Select a color to highlight task priority
+        </p>
       </div>
 
       {/* Reminder Interval */}

@@ -13,10 +13,11 @@ interface KanbanCardProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask?: (task: Task) => void;
   onViewDetails?: (task: Task) => void;
+  onTogglePin?: (taskId: string, isPinned: boolean) => void;
   isDragging?: boolean;
 }
 
-export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetails, isDragging = false }: KanbanCardProps) {
+export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetails, onTogglePin, isDragging = false }: KanbanCardProps) {
   const { t, locale } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -97,9 +98,42 @@ export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetai
             </svg>
           </div>
 
-          <h4 className="text-sm font-semibold text-white leading-snug flex-1 min-w-0">
+          <h4
+            className="text-sm font-semibold leading-snug flex-1 min-w-0"
+            style={{ color: task.color || 'white' }}
+          >
             {task.name}
           </h4>
+
+          {task.isPinned && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePin?.(task.id, false);
+              }}
+              className="flex-shrink-0 text-amber-400 hover:text-amber-300 transition-colors"
+              title="Unpin task"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16,9V4H17V2H7V4H8V9C8,10.66 6.66,12 5,12V14H11V22H13V14H19V12C17.34,12 16,10.66 16,9Z" />
+              </svg>
+            </button>
+          )}
+
+          {!task.isPinned && onTogglePin && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePin(task.id, true);
+              }}
+              className="flex-shrink-0 text-slate-500 hover:text-amber-400 transition-colors opacity-0 group-hover:opacity-100"
+              title="Pin task"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
+          )}
 
           {needsAttention && (
             <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 bg-rose-500/20 text-rose-300 text-xs font-bold rounded-full border border-rose-500/30 animate-pulse">

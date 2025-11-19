@@ -22,7 +22,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('board');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, resetTaskReminder, setAllTasks } = useTasks();
+  const { tasks, isLoaded, addTask, updateTask, updateTaskStatus, deleteTask, resetTaskReminder, toggleTaskPin, setAllTasks } = useTasks();
 
   const handleAddTask = async (data: TaskFormData) => {
     try {
@@ -47,6 +47,7 @@ export default function Home() {
           description: data.description,
           url: data.url,
           reminderInterval: data.reminderInterval,
+          color: data.color,
         });
         setEditingTask(null);
       } catch (error) {
@@ -226,6 +227,7 @@ export default function Home() {
                 description: editingTask.description,
                 url: editingTask.url,
                 reminderInterval: editingTask.reminderInterval,
+                color: editingTask.color,
               }}
               isEditMode={true}
             />
@@ -242,6 +244,7 @@ export default function Home() {
               onDeleteTask={deleteTask}
               onEditTask={handleEditTask}
               onViewDetails={handleViewDetails}
+              onTogglePin={toggleTaskPin}
             />
           ) : (
             <TaskList
@@ -249,6 +252,7 @@ export default function Home() {
               onStatusChange={updateTaskStatus}
               onDelete={deleteTask}
               onViewDetails={handleViewDetails}
+              onTogglePin={toggleTaskPin}
             />
           )}
         </div>
