@@ -10,7 +10,8 @@
     "search": "Search",
     "filter": "Filter",
     "loading": "Loading...",
-    "generating": "Generating..."
+    "generating": "Generating...",
+    "saving": "Saving..."
   },
   "taskStatus": {
     "init": "To Do",
@@ -88,6 +89,13 @@
     "allWords": "All",
     "favorites": "Favorites",
     "wordCount": "{{count}} word",
-    "wordCount_plural": "{{count}} words"
+    "wordCount_plural": "{{count}} words",
+    "manualCreate": "Add Word Manually",
+    "aiGenerate": "Generate with AI",
+    "wordRequired": "Word is required",
+    "meaningRequired": "Meaning is required",
+    "meaningPlaceholder": "Enter Vietnamese meaning...",
+    "usagePlaceholder": "Enter usage examples...",
+    "culturalContextPlaceholder": "Enter cultural context, etymology..."
   }
 }

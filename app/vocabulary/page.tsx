@@ -7,15 +7,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import VocabularyForm from '@/components/VocabularyForm';
 import VocabularyTable from '@/components/VocabularyTable';
 import VocabularyDetailModal from '@/components/VocabularyDetailModal';
+import VocabularyManualModal from '@/components/VocabularyManualModal';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Vocabulary, VocabularyAIResponse } from '@/types/vocabulary';
 import Link from 'next/link';
 
+type AddMode = 'none' | 'ai' | 'manual';
+
 export default function VocabularyPage() {
   const { t } = useTranslation();
   const { user, signOut } = useAuth();
-  const [showForm, setShowForm] = useState(false);
+  const [addMode, setAddMode] = useState<AddMode>('none');
   const [selectedVocab, setSelectedVocab] = useState<Vocabulary | null>(null);
 
   const {
@@ -128,48 +131,63 @@ export default function VocabularyPage() {
                   </div>
                 </div>
 
-                {/* Add Word Button */}
-                <button
-                  onClick={() => setShowForm(!showForm)}
-                  className={`
-                    px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2
-                    ${
-                      showForm
-                        ? 'bg-slate-700 text-slate-200 hover:bg-slate-600'
-                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40 hover:scale-105'
-                    }
-                  `}
-                >
-                  {showForm ? (
-                    <>
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                      {t('common.cancel')}
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      {t('vocabulary.addWord')}
-                    </>
-                  )}
-                </button>
+                {/* Add Word Buttons */}
+                <div className="flex items-center gap-2">
+                  {/* AI Generate Button */}
+                  <button
+                    onClick={() => setAddMode(addMode === 'ai' ? 'none' : 'ai')}
+                    className={`
+                      px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2
+                      ${
+                        addMode === 'ai'
+                          ? 'bg-slate-700 text-slate-200 hover:bg-slate-600'
+                          : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25'
+                      }
+                    `}
+                    title={t('vocabulary.aiGenerate')}
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span className="hidden sm:inline">{t('vocabulary.aiGenerate')}</span>
+                  </button>
+
+                  {/* Manual Create Button */}
+                  <button
+                    onClick={() => setAddMode('manual')}
+                    className="px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2
+                             bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700
+                             shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40"
+                    title={t('vocabulary.manualCreate')}
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span className="hidden sm:inline">{t('vocabulary.manualCreate')}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </header>
 
-          {/* Vocabulary Form */}
-          {showForm && (
+          {/* AI Vocabulary Form */}
+          {addMode === 'ai' && (
             <VocabularyForm
               onGenerate={handleGenerate}
               onAdd={handleAdd}
               onCheckExists={handleCheckExists}
               generating={generating}
-              onCancel={() => setShowForm(false)}
+              onCancel={() => setAddMode('none')}
             />
           )}
+
+          {/* Manual Create Modal */}
+          <VocabularyManualModal
+            isOpen={addMode === 'manual'}
+            onClose={() => setAddMode('none')}
+            onSave={handleAdd}
+            onCheckExists={handleCheckExists}
+          />
 
           {/* Vocabulary Table */}
           <div className="animate-fade-in">

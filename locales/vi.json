@@ -10,7 +10,8 @@
     "search": "Tìm kiếm",
     "filter": "Lọc",
     "loading": "Đang tải...",
-    "generating": "Đang tạo..."
+    "generating": "Đang tạo...",
+    "saving": "Đang lưu..."
   },
   "taskStatus": {
     "init": "Cần Làm",
@@ -88,6 +89,13 @@
     "allWords": "Tất Cả",
     "favorites": "Yêu Thích",
     "wordCount": "{{count}} từ",
-    "wordCount_plural": "{{count}} từ"
+    "wordCount_plural": "{{count}} từ",
+    "manualCreate": "Thêm Từ Thủ Công",
+    "aiGenerate": "Tạo với AI",
+    "wordRequired": "Vui lòng nhập từ",
+    "meaningRequired": "Vui lòng nhập nghĩa",
+    "meaningPlaceholder": "Nhập nghĩa tiếng Việt...",
+    "usagePlaceholder": "Nhập ví dụ cách sử dụng...",
+    "culturalContextPlaceholder": "Nhập ngữ cảnh văn hóa, nguồn gốc từ..."
   }
 }
