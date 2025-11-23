@@ -14,6 +14,14 @@ interface TaskItemProps {
   onTogglePin?: (taskId: string, isPinned: boolean) => void;
 }
 
+// Preprocess markdown to ensure numbered lists are properly formatted
+// Markdown requires a blank line before lists for proper parsing
+function preprocessMarkdown(text: string): string {
+  // Add blank line before numbered lists if not already present
+  // Match lines that start with a number followed by period and space
+  return text.replace(/([^\n])(\n)(\d+\.\s)/g, '$1\n\n$3');
+}
+
 export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogglePin }: TaskItemProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -156,7 +164,7 @@ export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogg
               </button>
               {isExpanded && (
                 <div className="mt-3 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50 prose prose-sm prose-invert max-w-none">
-                  <ReactMarkdown>{task.description}</ReactMarkdown>
+                  <ReactMarkdown>{preprocessMarkdown(task.description)}</ReactMarkdown>
                 </div>
               )}
             </div>

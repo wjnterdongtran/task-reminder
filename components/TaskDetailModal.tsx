@@ -14,6 +14,12 @@ interface TaskDetailModalProps {
   onDelete: (id: string) => void;
 }
 
+// Preprocess markdown to ensure numbered lists are properly formatted
+// Markdown requires a blank line before lists for proper parsing
+function preprocessMarkdown(text: string): string {
+  return text.replace(/([^\n])(\n)(\d+\.\s)/g, '$1\n\n$3');
+}
+
 export default function TaskDetailModal({
   task,
   isOpen,
@@ -183,7 +189,7 @@ export default function TaskDetailModal({
                 Description
               </h3>
               <div className="prose prose-lg prose-invert max-w-none bg-slate-900/50 rounded-lg p-6 border border-slate-700/50">
-                <ReactMarkdown>{task.description}</ReactMarkdown>
+                <ReactMarkdown>{preprocessMarkdown(task.description)}</ReactMarkdown>
               </div>
             </div>
           ) : (
