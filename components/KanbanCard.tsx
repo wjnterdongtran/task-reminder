@@ -7,6 +7,7 @@ import { Task, TaskStatus } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
+import { preprocessMarkdown } from '@/lib/markdown';
 
 interface KanbanCardProps {
   task: Task;
@@ -15,12 +16,6 @@ interface KanbanCardProps {
   onViewDetails?: (task: Task) => void;
   onTogglePin?: (taskId: string, isPinned: boolean) => void;
   isDragging?: boolean;
-}
-
-// Preprocess markdown to ensure numbered lists are properly formatted
-// Markdown requires a blank line before lists for proper parsing
-function preprocessMarkdown(text: string): string {
-  return text.replace(/([^\n])(\n)(\d+\.\s)/g, '$1\n\n$3');
 }
 
 export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetails, onTogglePin, isDragging = false }: KanbanCardProps) {

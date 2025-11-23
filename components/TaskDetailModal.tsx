@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { Task, TaskStatus } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { preprocessMarkdown } from '@/lib/markdown';
 
 interface TaskDetailModalProps {
   task: Task | null;
@@ -12,12 +13,6 @@ interface TaskDetailModalProps {
   onClose: () => void;
   onStatusChange: (id: string, status: TaskStatus) => void;
   onDelete: (id: string) => void;
-}
-
-// Preprocess markdown to ensure numbered lists are properly formatted
-// Markdown requires a blank line before lists for proper parsing
-function preprocessMarkdown(text: string): string {
-  return text.replace(/([^\n])(\n)(\d+\.\s)/g, '$1\n\n$3');
 }
 
 export default function TaskDetailModal({

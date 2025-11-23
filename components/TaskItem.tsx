@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { Task, TaskStatus } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { preprocessMarkdown } from '@/lib/markdown';
 
 interface TaskItemProps {
   task: Task;
@@ -12,14 +13,6 @@ interface TaskItemProps {
   onDelete: (id: string) => void;
   onViewDetails?: (task: Task) => void;
   onTogglePin?: (taskId: string, isPinned: boolean) => void;
-}
-
-// Preprocess markdown to ensure numbered lists are properly formatted
-// Markdown requires a blank line before lists for proper parsing
-function preprocessMarkdown(text: string): string {
-  // Add blank line before numbered lists if not already present
-  // Match lines that start with a number followed by period and space
-  return text.replace(/([^\n])(\n)(\d+\.\s)/g, '$1\n\n$3');
 }
 
 export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogglePin }: TaskItemProps) {
