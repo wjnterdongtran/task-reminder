@@ -96,6 +96,14 @@
     "meaningRequired": "Vui lòng nhập nghĩa",
     "meaningPlaceholder": "Nhập nghĩa tiếng Việt...",
     "usagePlaceholder": "Nhập ví dụ cách sử dụng...",
-    "culturalContextPlaceholder": "Nhập ngữ cảnh văn hóa, nguồn gốc từ..."
+    "culturalContextPlaceholder": "Nhập ngữ cảnh văn hóa, nguồn gốc từ...",
+    "examples": "Ví Dụ",
+    "collocations": "Cụm Từ Thường Đi Kèm",
+    "grammarPatterns": "Cấu Trúc Ngữ Pháp",
+    "commonMistakes": "Lỗi Thường Gặp",
+    "etymology": "Nguồn Gốc Từ",
+    "culturalSignificance": "Ý Nghĩa Văn Hoá",
+    "relatedExpressions": "Cụm Từ Liên Quan",
+    "nuances": "Lưu Ý Cho Người Việt"
   }
 }

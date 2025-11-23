@@ -10,7 +10,7 @@ import VocabularyDetailModal from '@/components/VocabularyDetailModal';
 import VocabularyManualModal from '@/components/VocabularyManualModal';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { Vocabulary, VocabularyAIResponse } from '@/types/vocabulary';
+import { Vocabulary, VocabularyAIResponse, VocabularyFormData } from '@/types/vocabulary';
 import Link from 'next/link';
 
 type AddMode = 'none' | 'ai' | 'manual';
@@ -51,6 +51,15 @@ export default function VocabularyPage() {
   const handleAdd = useCallback(
     async (data: VocabularyAIResponse): Promise<void> => {
       await addVocabulary(data);
+    },
+    [addVocabulary]
+  );
+
+  // Handle manual form data (strings)
+  const handleAddManual = useCallback(
+    async (data: VocabularyFormData): Promise<void> => {
+      // Convert form data to a compatible format for the service
+      await addVocabulary(data as unknown as VocabularyAIResponse);
     },
     [addVocabulary]
   );
@@ -185,7 +194,7 @@ export default function VocabularyPage() {
           <VocabularyManualModal
             isOpen={addMode === 'manual'}
             onClose={() => setAddMode('none')}
-            onSave={handleAdd}
+            onSave={handleAddManual}
             onCheckExists={handleCheckExists}
           />
 

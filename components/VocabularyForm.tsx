@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { VocabularyAIResponse } from '@/types/vocabulary';
+import MarkdownContent, { MarkdownList } from './MarkdownContent';
 
 interface VocabularyFormProps {
   onGenerate: (word: string) => Promise<VocabularyAIResponse | null>;
@@ -58,6 +59,154 @@ export default function VocabularyForm({
       e.preventDefault();
       handleGenerate();
     }
+  };
+
+  // Render IPA preview
+  const renderIPAPreview = () => {
+    if (!generatedData?.ipa) return null;
+    const ipa = generatedData.ipa;
+
+    if (typeof ipa === 'object' && 'uk' in ipa) {
+      return (
+        <div className="flex items-center gap-3 flex-wrap">
+          {ipa.uk && (
+            <span className="text-slate-400 text-sm">
+              <span className="text-xs text-slate-500 uppercase mr-1">UK</span>
+              {ipa.uk}
+            </span>
+          )}
+          {ipa.us && (
+            <span className="text-slate-400 text-sm">
+              <span className="text-xs text-slate-500 uppercase mr-1">US</span>
+              {ipa.us}
+            </span>
+          )}
+        </div>
+      );
+    }
+    return <span className="text-slate-400 text-sm">{String(ipa)}</span>;
+  };
+
+  // Render meaning preview
+  const renderMeaningPreview = () => {
+    if (!generatedData?.meaning) return null;
+    const meaning = generatedData.meaning;
+
+    if (typeof meaning === 'object' && 'vietnamese' in meaning) {
+      return (
+        <div className="space-y-2">
+          {meaning.partOfSpeech && (
+            <span className="inline-block px-2 py-0.5 bg-cyan-500/20 text-cyan-300 text-xs rounded-full">
+              {meaning.partOfSpeech}
+            </span>
+          )}
+          <div className="text-white">
+            <MarkdownContent content={meaning.vietnamese} />
+          </div>
+        </div>
+      );
+    }
+    return <p className="text-white whitespace-pre-wrap">{String(meaning)}</p>;
+  };
+
+  // Render usage preview
+  const renderUsagePreview = () => {
+    if (!generatedData?.usage) return null;
+    const usage = generatedData.usage;
+
+    if (typeof usage === 'object' && 'examples' in usage) {
+      return (
+        <div className="space-y-3">
+          {/* Examples */}
+          {usage.examples && usage.examples.length > 0 && (
+            <div>
+              <h6 className="text-xs text-emerald-400 uppercase mb-1">{t('vocabulary.examples')}</h6>
+              <MarkdownList items={usage.examples} ordered />
+            </div>
+          )}
+
+          {/* Collocations */}
+          {usage.collocations && usage.collocations.length > 0 && (
+            <div>
+              <h6 className="text-xs text-emerald-400 uppercase mb-1">{t('vocabulary.collocations')}</h6>
+              <div className="flex flex-wrap gap-1">
+                {usage.collocations.map((col, i) => (
+                  <span key={i} className="px-2 py-0.5 bg-slate-700/50 rounded text-xs text-slate-300">
+                    {col}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Grammar Patterns */}
+          {usage.grammarPatterns && usage.grammarPatterns.length > 0 && (
+            <div>
+              <h6 className="text-xs text-emerald-400 uppercase mb-1">{t('vocabulary.grammarPatterns')}</h6>
+              <MarkdownList items={usage.grammarPatterns} />
+            </div>
+          )}
+
+          {/* Common Mistakes */}
+          {usage.commonMistakes && (
+            <div>
+              <h6 className="text-xs text-orange-400 uppercase mb-1">{t('vocabulary.commonMistakes')}</h6>
+              <div className="text-orange-200/80 text-sm">
+                <MarkdownContent content={usage.commonMistakes} />
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return <p className="text-slate-300 whitespace-pre-wrap">{String(usage)}</p>;
+  };
+
+  // Render cultural context preview
+  const renderCulturalContextPreview = () => {
+    if (!generatedData?.culturalContext) return null;
+    const ctx = generatedData.culturalContext;
+
+    if (typeof ctx === 'object' && 'etymology' in ctx) {
+      return (
+        <div className="space-y-3">
+          {ctx.etymology && (
+            <div>
+              <h6 className="text-xs text-purple-400 uppercase mb-1">{t('vocabulary.etymology')}</h6>
+              <div className="text-slate-300 text-sm">
+                <MarkdownContent content={ctx.etymology} />
+              </div>
+            </div>
+          )}
+
+          {ctx.culturalSignificance && (
+            <div>
+              <h6 className="text-xs text-purple-400 uppercase mb-1">{t('vocabulary.culturalSignificance')}</h6>
+              <div className="text-slate-300 text-sm">
+                <MarkdownContent content={ctx.culturalSignificance} />
+              </div>
+            </div>
+          )}
+
+          {ctx.relatedExpressions && ctx.relatedExpressions.length > 0 && (
+            <div>
+              <h6 className="text-xs text-purple-400 uppercase mb-1">{t('vocabulary.relatedExpressions')}</h6>
+              <MarkdownList items={ctx.relatedExpressions} />
+            </div>
+          )}
+
+          {ctx.nuancesForVietnameseLearners && (
+            <div>
+              <h6 className="text-xs text-purple-400 uppercase mb-1">{t('vocabulary.nuances')}</h6>
+              <div className="text-slate-300 text-sm">
+                <MarkdownContent content={ctx.nuancesForVietnameseLearners} />
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return <p className="text-slate-400 whitespace-pre-wrap">{String(ctx)}</p>;
   };
 
   return (
@@ -120,43 +269,49 @@ export default function VocabularyForm({
 
       {/* Generated Content Preview */}
       {generatedData && (
-        <div className="bg-slate-900/50 rounded-xl p-4 mb-4 border border-slate-600/30">
-          <div className="grid gap-4">
+        <div className="bg-slate-900/50 rounded-xl p-4 mb-4 border border-slate-600/30 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-4">
             {/* Word and IPA */}
-            <div className="flex items-baseline gap-3">
-              <h4 className="text-xl font-bold text-cyan-400 font-mono">
-                {generatedData.word}
-              </h4>
-              {generatedData.ipa && (
-                <span className="text-slate-400 text-sm">{generatedData.ipa}</span>
-              )}
+            <div>
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <h4 className="text-xl font-bold text-cyan-400 font-mono">
+                  {generatedData.word}
+                </h4>
+              </div>
+              {renderIPAPreview()}
             </div>
 
             {/* Meaning */}
             <div>
-              <label className="text-xs text-slate-500 uppercase tracking-wide">
+              <label className="text-xs text-cyan-400 uppercase tracking-wide font-medium">
                 {t('vocabulary.meaning')}
               </label>
-              <p className="text-white mt-1 whitespace-pre-wrap">{generatedData.meaning}</p>
+              <div className="mt-1 p-3 bg-slate-800/50 rounded-lg">
+                {renderMeaningPreview()}
+              </div>
             </div>
 
             {/* Usage */}
             {generatedData.usage && (
               <div>
-                <label className="text-xs text-slate-500 uppercase tracking-wide">
+                <label className="text-xs text-emerald-400 uppercase tracking-wide font-medium">
                   {t('vocabulary.usage')}
                 </label>
-                <p className="text-slate-300 mt-1 whitespace-pre-wrap">{generatedData.usage}</p>
+                <div className="mt-1 p-3 bg-slate-800/50 rounded-lg">
+                  {renderUsagePreview()}
+                </div>
               </div>
             )}
 
             {/* Cultural Context */}
             {generatedData.culturalContext && (
               <div>
-                <label className="text-xs text-slate-500 uppercase tracking-wide">
+                <label className="text-xs text-purple-400 uppercase tracking-wide font-medium">
                   {t('vocabulary.culturalContext')}
                 </label>
-                <p className="text-slate-400 mt-1 whitespace-pre-wrap">{generatedData.culturalContext}</p>
+                <div className="mt-1 p-3 bg-slate-800/50 rounded-lg">
+                  {renderCulturalContextPreview()}
+                </div>
               </div>
             )}
           </div>

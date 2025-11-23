@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from '@/contexts/LanguageContext';
-import { VocabularyAIResponse } from '@/types/vocabulary';
+import { VocabularyFormData } from '@/types/vocabulary';
 
 interface VocabularyManualModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: VocabularyAIResponse) => Promise<void>;
+  onSave: (data: VocabularyFormData) => Promise<void>;
   onCheckExists: (word: string) => Promise<boolean>;
 }
 
