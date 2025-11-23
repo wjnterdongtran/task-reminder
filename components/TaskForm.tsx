@@ -22,6 +22,7 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
   const [name, setName] = useState(initialValues?.name || '');
   const [description, setDescription] = useState(initialValues?.description || '');
   const [url, setUrl] = useState(initialValues?.url || '');
+  const [jiraId, setJiraId] = useState(initialValues?.jiraId || '');
   const [reminderInterval, setReminderInterval] = useState(initialValues?.reminderInterval || 24);
   const [color, setColor] = useState(initialValues?.color || '');
 
@@ -63,6 +64,7 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
       name: name.trim(),
       description: description.trim(),
       url: url.trim(),
+      jiraId: jiraId.trim() || undefined,
       reminderInterval,
       color: color || undefined,
     });
@@ -72,6 +74,7 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
       setName('');
       setDescription('');
       setUrl('');
+      setJiraId('');
       setReminderInterval(24);
       setColor('');
     }
@@ -138,6 +141,27 @@ export function TaskForm({ onSubmit, onCancel, initialValues, isEditMode = false
                      transition-all duration-200"
           placeholder={t('taskForm.urlPlaceholder')}
         />
+      </div>
+
+      {/* Jira ID */}
+      <div>
+        <label htmlFor="jiraId" className="block text-sm font-semibold text-slate-200 mb-2">
+          Jira ID
+        </label>
+        <input
+          type="text"
+          id="jiraId"
+          value={jiraId}
+          onChange={(e) => setJiraId(e.target.value)}
+          className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg
+                     text-white placeholder-slate-500
+                     focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent
+                     transition-all duration-200"
+          placeholder="e.g., PROJECT-123"
+        />
+        <p className="text-xs text-slate-400 mt-2">
+          Optional Jira ticket ID for reference
+        </p>
       </div>
 
       {/* Color Picker */}

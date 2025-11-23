@@ -10,6 +10,7 @@ export interface Task {
   name: string;
   description: string; // Markdown content
   url: string; // Jira link or other URL
+  jiraId?: string; // Optional Jira ticket ID (e.g., PROJECT-123)
   status: TaskStatus;
   reminderInterval: number; // In hours (default 24)
   createdAt: string;
@@ -24,6 +25,7 @@ export interface TaskFormData {
   name: string;
   description: string;
   url: string;
+  jiraId?: string;
   reminderInterval: number;
   color?: string;
 }

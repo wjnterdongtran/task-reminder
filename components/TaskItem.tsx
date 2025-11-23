@@ -19,6 +19,15 @@ export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogg
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [copiedJiraId, setCopiedJiraId] = useState(false);
+
+  const handleCopyJiraId = async () => {
+    if (task.jiraId) {
+      await navigator.clipboard.writeText(task.jiraId);
+      setCopiedJiraId(true);
+      setTimeout(() => setCopiedJiraId(false), 2000);
+    }
+  };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onStatusChange(task.id, parseInt(e.target.value) as TaskStatus);
@@ -136,6 +145,33 @@ export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogg
               </svg>
               <span className="truncate max-w-xs">{task.url.replace(/^https?:\/\//, '')}</span>
             </a>
+          )}
+
+          {/* Jira ID */}
+          {task.jiraId && (
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm text-slate-400">Jira:</span>
+              <span className="text-sm font-mono text-purple-400">{task.jiraId}</span>
+              <button
+                onClick={handleCopyJiraId}
+                className={`p-1 rounded transition-all duration-200 ${
+                  copiedJiraId
+                    ? 'text-emerald-400 bg-emerald-500/20'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                }`}
+                title={copiedJiraId ? 'Copied!' : 'Copy Jira ID'}
+              >
+                {copiedJiraId ? (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                )}
+              </button>
+            </div>
           )}
 
           {/* Description Toggle */}
