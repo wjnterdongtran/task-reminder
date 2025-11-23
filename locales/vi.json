@@ -8,7 +8,9 @@
     "edit": "Sửa",
     "add": "Thêm",
     "search": "Tìm kiếm",
-    "filter": "Lọc"
+    "filter": "Lọc",
+    "loading": "Đang tải...",
+    "generating": "Đang tạo..."
   },
   "taskStatus": {
     "init": "Cần Làm",
@@ -59,6 +61,33 @@
     "newTask": "Công Việc Mới",
     "toggleView": "Chuyển Giao Diện",
     "listView": "Dạng Danh Sách",
-    "boardView": "Dạng Bảng"
+    "boardView": "Dạng Bảng",
+    "vocabulary": "Từ Vựng",
+    "tasks": "Công Việc"
+  },
+  "vocabulary": {
+    "title": "Từ Vựng Tiếng Anh",
+    "searchPlaceholder": "Tìm từ, nghĩa...",
+    "addWord": "Thêm Từ",
+    "word": "Từ",
+    "ipa": "Phiên Âm",
+    "meaning": "Nghĩa",
+    "usage": "Cách Sử Dụng",
+    "culturalContext": "Văn Hoá Liên Quan",
+    "favorite": "Yêu Thích",
+    "reviews": "Lượt Xem",
+    "noWords": "Không có từ nào",
+    "noWordsHint": "Thêm từ đầu tiên để bắt đầu học",
+    "wordExists": "Từ này đã tồn tại",
+    "generateContent": "Tạo với AI",
+    "addToList": "Thêm Vào Danh Sách",
+    "wordPlaceholder": "Nhập từ hoặc cụm từ...",
+    "confirmDelete": "Nhấn lại để xác nhận",
+    "lastReviewed": "Xem lần cuối",
+    "viewDetails": "Xem Chi Tiết",
+    "allWords": "Tất Cả",
+    "favorites": "Yêu Thích",
+    "wordCount": "{{count}} từ",
+    "wordCount_plural": "{{count}} từ"
   }
 }

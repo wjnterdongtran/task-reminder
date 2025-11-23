@@ -8,7 +8,9 @@
     "edit": "Edit",
     "add": "Add",
     "search": "Search",
-    "filter": "Filter"
+    "filter": "Filter",
+    "loading": "Loading...",
+    "generating": "Generating..."
   },
   "taskStatus": {
     "init": "To Do",
@@ -59,6 +61,33 @@
     "newTask": "New Task",
     "toggleView": "Toggle View",
     "listView": "List View",
-    "boardView": "Board View"
+    "boardView": "Board View",
+    "vocabulary": "Vocabulary",
+    "tasks": "Tasks"
+  },
+  "vocabulary": {
+    "title": "English Vocabulary",
+    "searchPlaceholder": "Search words, meanings...",
+    "addWord": "Add Word",
+    "word": "Word",
+    "ipa": "IPA",
+    "meaning": "Meaning",
+    "usage": "Usage",
+    "culturalContext": "Cultural Context",
+    "favorite": "Favorite",
+    "reviews": "Reviews",
+    "noWords": "No words found",
+    "noWordsHint": "Add your first word to start learning",
+    "wordExists": "This word already exists",
+    "generateContent": "Generate with AI",
+    "addToList": "Add to List",
+    "wordPlaceholder": "Enter a word or phrase...",
+    "confirmDelete": "Click again to confirm",
+    "lastReviewed": "Last reviewed",
+    "viewDetails": "View Details",
+    "allWords": "All",
+    "favorites": "Favorites",
+    "wordCount": "{{count}} word",
+    "wordCount_plural": "{{count}} words"
   }
 }
