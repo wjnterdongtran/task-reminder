@@ -142,11 +142,18 @@ main {
   text-decoration: underline;
 }
 
-.prose ul,
+.prose ul {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
 .prose ol {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   padding-left: 1.5rem;
+  list-style-type: decimal;
 }
 
 .prose li {
