@@ -23,14 +23,22 @@ function dbRowToVocabulary(row: any): Vocabulary {
   };
 }
 
+// Helper to stringify value if it's an object
+function stringifyIfObject(value: any): string {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+}
+
 // Convert form data to database insert format
+// Handles both legacy string format and new structured format
 function vocabularyToDbInsert(formData: VocabularyFormData | VocabularyAIResponse) {
   return {
     word: formData.word,
-    ipa: formData.ipa || '',
-    meaning: formData.meaning || '',
-    usage: formData.usage || '',
-    cultural_context: formData.culturalContext || '',
+    ipa: stringifyIfObject(formData.ipa),
+    meaning: stringifyIfObject(formData.meaning),
+    usage: stringifyIfObject(formData.usage),
+    cultural_context: stringifyIfObject(formData.culturalContext),
     is_favorite: false,
     review_count: 0,
     last_reviewed_at: null,

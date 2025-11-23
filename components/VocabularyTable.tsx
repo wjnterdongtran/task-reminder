@@ -2,8 +2,16 @@
 
 import { useState } from 'react';
 import { useTranslation } from '@/contexts/LanguageContext';
-import { Vocabulary } from '@/types/vocabulary';
+import {
+  Vocabulary,
+  parseVocabularyFields,
+  isStructuredIPA,
+  isStructuredMeaning,
+  isStructuredUsage,
+  isStructuredCulturalContext,
+} from '@/types/vocabulary';
 import { format } from 'date-fns';
+import MarkdownContent, { MarkdownList } from './MarkdownContent';
 
 interface VocabularyTableProps {
   vocabulary: Vocabulary[];
@@ -26,11 +34,28 @@ export default function VocabularyTable({
 
   // Filter vocabulary
   const filteredVocabulary = vocabulary.filter((vocab) => {
+    // Parse the vocabulary to get structured data for search
+    const parsed = parseVocabularyFields(vocab);
+
+    // Get searchable text from meaning
+    const meaningText = isStructuredMeaning(parsed.meaning)
+      ? parsed.meaning.vietnamese
+      : typeof parsed.meaning === 'string'
+      ? parsed.meaning
+      : '';
+
+    // Get searchable text from usage
+    const usageText = isStructuredUsage(parsed.usage)
+      ? parsed.usage.examples.join(' ') + ' ' + parsed.usage.commonMistakes
+      : typeof parsed.usage === 'string'
+      ? parsed.usage
+      : '';
+
     const matchesSearch =
       !searchQuery ||
       vocab.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vocab.meaning.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vocab.usage.toLowerCase().includes(searchQuery.toLowerCase());
+      meaningText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      usageText.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesFavorite = !showFavoritesOnly || vocab.isFavorite;
 
@@ -45,6 +70,191 @@ export default function VocabularyTable({
       setDeleteConfirm(id);
       setTimeout(() => setDeleteConfirm(null), 3000);
     }
+  };
+
+  // Render IPA in table row
+  const renderIPA = (vocab: Vocabulary) => {
+    const parsed = parseVocabularyFields(vocab);
+    if (isStructuredIPA(parsed.ipa)) {
+      const parts = [];
+      if (parsed.ipa.uk) parts.push(`UK: ${parsed.ipa.uk}`);
+      if (parsed.ipa.us) parts.push(`US: ${parsed.ipa.us}`);
+      return parts.length > 0 ? (
+        <span className="text-slate-400 text-sm">{parts.join(' | ')}</span>
+      ) : null;
+    }
+    return parsed.ipa ? (
+      <span className="text-slate-400 text-sm">{parsed.ipa}</span>
+    ) : null;
+  };
+
+  // Render meaning summary in table row
+  const renderMeaningSummary = (vocab: Vocabulary) => {
+    const parsed = parseVocabularyFields(vocab);
+    if (isStructuredMeaning(parsed.meaning)) {
+      return (
+        <div className="flex items-start gap-2">
+          {parsed.meaning.partOfSpeech && (
+            <span className="flex-shrink-0 px-1.5 py-0.5 bg-cyan-500/20 text-cyan-300 text-xs rounded">
+              {parsed.meaning.partOfSpeech}
+            </span>
+          )}
+          <span className="text-slate-300 line-clamp-2">{parsed.meaning.vietnamese}</span>
+        </div>
+      );
+    }
+    return (
+      <p className="text-slate-300 line-clamp-2">
+        {typeof parsed.meaning === 'string' ? parsed.meaning : ''}
+      </p>
+    );
+  };
+
+  // Render expanded content
+  const renderExpandedContent = (vocab: Vocabulary) => {
+    const parsed = parseVocabularyFields(vocab);
+
+    return (
+      <div className="px-4 pb-4 pt-2 border-t border-slate-700/50 space-y-4 animate-slideUp">
+        {/* Usage Section */}
+        {isStructuredUsage(parsed.usage) ? (
+          <div className="space-y-3">
+            {/* Examples */}
+            {parsed.usage.examples && parsed.usage.examples.length > 0 && (
+              <div>
+                <label className="text-xs text-emerald-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  {t('vocabulary.examples')}
+                </label>
+                <MarkdownList items={parsed.usage.examples} ordered />
+              </div>
+            )}
+
+            {/* Collocations */}
+            {parsed.usage.collocations && parsed.usage.collocations.length > 0 && (
+              <div>
+                <label className="text-xs text-emerald-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  {t('vocabulary.collocations')}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {parsed.usage.collocations.map((col, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 bg-slate-700/50 rounded text-sm text-slate-300"
+                    >
+                      {col}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Grammar Patterns */}
+            {parsed.usage.grammarPatterns && parsed.usage.grammarPatterns.length > 0 && (
+              <div>
+                <label className="text-xs text-emerald-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                  </svg>
+                  {t('vocabulary.grammarPatterns')}
+                </label>
+                <MarkdownList items={parsed.usage.grammarPatterns} />
+              </div>
+            )}
+
+            {/* Common Mistakes */}
+            {parsed.usage.commonMistakes && (
+              <div>
+                <label className="text-xs text-orange-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  {t('vocabulary.commonMistakes')}
+                </label>
+                <div className="text-orange-200/80">
+                  <MarkdownContent content={parsed.usage.commonMistakes} />
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          parsed.usage && (
+            <div>
+              <label className="text-xs text-slate-500 uppercase tracking-wide">
+                {t('vocabulary.usage')}
+              </label>
+              <p className="text-slate-300 mt-1 whitespace-pre-wrap">
+                {typeof parsed.usage === 'string' ? parsed.usage : ''}
+              </p>
+            </div>
+          )
+        )}
+
+        {/* Cultural Context Section */}
+        {isStructuredCulturalContext(parsed.culturalContext) ? (
+          <div className="space-y-3 pt-3 border-t border-slate-700/30">
+            {/* Etymology */}
+            {parsed.culturalContext.etymology && (
+              <div>
+                <label className="text-xs text-purple-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {t('vocabulary.etymology')}
+                </label>
+                <div className="text-slate-300">
+                  <MarkdownContent content={parsed.culturalContext.etymology} />
+                </div>
+              </div>
+            )}
+
+            {/* Related Expressions */}
+            {parsed.culturalContext.relatedExpressions && parsed.culturalContext.relatedExpressions.length > 0 && (
+              <div>
+                <label className="text-xs text-purple-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  {t('vocabulary.relatedExpressions')}
+                </label>
+                <MarkdownList items={parsed.culturalContext.relatedExpressions} />
+              </div>
+            )}
+
+            {/* Nuances */}
+            {parsed.culturalContext.nuancesForVietnameseLearners && (
+              <div>
+                <label className="text-xs text-purple-400 uppercase tracking-wide font-medium flex items-center gap-1 mb-2">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  {t('vocabulary.nuances')}
+                </label>
+                <div className="text-slate-300">
+                  <MarkdownContent content={parsed.culturalContext.nuancesForVietnameseLearners} />
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          parsed.culturalContext && (
+            <div>
+              <label className="text-xs text-slate-500 uppercase tracking-wide">
+                {t('vocabulary.culturalContext')}
+              </label>
+              <p className="text-slate-400 mt-1 whitespace-pre-wrap">
+                {typeof parsed.culturalContext === 'string' ? parsed.culturalContext : ''}
+              </p>
+            </div>
+          )
+        )}
+      </div>
+    );
   };
 
   return (
@@ -144,11 +354,9 @@ export default function VocabularyTable({
                     <h4 className="text-lg font-bold text-cyan-400 font-mono">
                       {vocab.word}
                     </h4>
-                    {vocab.ipa && (
-                      <span className="text-slate-400 text-sm">{vocab.ipa}</span>
-                    )}
+                    {renderIPA(vocab)}
                   </div>
-                  <p className="text-slate-300 mt-1 line-clamp-2">{vocab.meaning}</p>
+                  <div className="mt-1">{renderMeaningSummary(vocab)}</div>
 
                   {/* Metadata */}
                   <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
@@ -208,26 +416,7 @@ export default function VocabularyTable({
               </div>
 
               {/* Expanded Content */}
-              {expandedId === vocab.id && (
-                <div className="px-4 pb-4 pt-2 border-t border-slate-700/50 space-y-3 animate-slideUp">
-                  {vocab.usage && (
-                    <div>
-                      <label className="text-xs text-slate-500 uppercase tracking-wide">
-                        {t('vocabulary.usage')}
-                      </label>
-                      <p className="text-slate-300 mt-1 whitespace-pre-wrap">{vocab.usage}</p>
-                    </div>
-                  )}
-                  {vocab.culturalContext && (
-                    <div>
-                      <label className="text-xs text-slate-500 uppercase tracking-wide">
-                        {t('vocabulary.culturalContext')}
-                      </label>
-                      <p className="text-slate-400 mt-1 whitespace-pre-wrap">{vocab.culturalContext}</p>
-                    </div>
-                  )}
-                </div>
-              )}
+              {expandedId === vocab.id && renderExpandedContent(vocab)}
             </div>
           ))}
         </div>

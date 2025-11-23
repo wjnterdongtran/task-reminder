@@ -96,6 +96,14 @@
     "meaningRequired": "Meaning is required",
     "meaningPlaceholder": "Enter Vietnamese meaning...",
     "usagePlaceholder": "Enter usage examples...",
-    "culturalContextPlaceholder": "Enter cultural context, etymology..."
+    "culturalContextPlaceholder": "Enter cultural context, etymology...",
+    "examples": "Examples",
+    "collocations": "Collocations",
+    "grammarPatterns": "Grammar Patterns",
+    "commonMistakes": "Common Mistakes",
+    "etymology": "Etymology",
+    "culturalSignificance": "Cultural Significance",
+    "relatedExpressions": "Related Expressions",
+    "nuances": "Nuances for Vietnamese Learners"
   }
 }
