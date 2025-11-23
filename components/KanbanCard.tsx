@@ -7,6 +7,7 @@ import { Task, TaskStatus } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
+import { preprocessMarkdown } from '@/lib/markdown';
 
 interface KanbanCardProps {
   task: Task;
@@ -184,7 +185,7 @@ export default function KanbanCard({ task, onDeleteTask, onEditTask, onViewDetai
 
             {isExpanded && (
               <div className="prose prose-sm prose-invert max-w-none mb-3 text-slate-300 bg-slate-900/50 rounded-lg p-3 border border-slate-700/50">
-                <ReactMarkdown>{task.description}</ReactMarkdown>
+                <ReactMarkdown>{preprocessMarkdown(task.description)}</ReactMarkdown>
               </div>
             )}
           </div>

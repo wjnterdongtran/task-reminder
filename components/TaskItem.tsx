@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { formatDistanceToNow } from 'date-fns';
 import { Task, TaskStatus } from '@/types/task';
 import { useTranslation } from '@/contexts/LanguageContext';
+import { preprocessMarkdown } from '@/lib/markdown';
 
 interface TaskItemProps {
   task: Task;
@@ -156,7 +157,7 @@ export function TaskItem({ task, onStatusChange, onDelete, onViewDetails, onTogg
               </button>
               {isExpanded && (
                 <div className="mt-3 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50 prose prose-sm prose-invert max-w-none">
-                  <ReactMarkdown>{task.description}</ReactMarkdown>
+                  <ReactMarkdown>{preprocessMarkdown(task.description)}</ReactMarkdown>
                 </div>
               )}
             </div>
