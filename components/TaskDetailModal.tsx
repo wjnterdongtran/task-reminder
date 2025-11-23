@@ -24,6 +24,15 @@ export default function TaskDetailModal({
 }: TaskDetailModalProps) {
   const { t } = useTranslation();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [copiedJiraId, setCopiedJiraId] = useState(false);
+
+  const handleCopyJiraId = async () => {
+    if (task?.jiraId) {
+      await navigator.clipboard.writeText(task.jiraId);
+      setCopiedJiraId(true);
+      setTimeout(() => setCopiedJiraId(false), 2000);
+    }
+  };
 
   // Close on Escape key
   useEffect(() => {
@@ -174,6 +183,43 @@ export default function TaskDetailModal({
                 </svg>
                 <span className="break-all">{task.url}</span>
               </a>
+            </div>
+          )}
+
+          {/* Jira ID Section */}
+          {task.jiraId && (
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                Jira ID
+              </h3>
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-mono text-purple-400">{task.jiraId}</span>
+                <button
+                  onClick={handleCopyJiraId}
+                  className={`px-3 py-1.5 rounded-lg flex items-center gap-2 transition-all duration-200 ${
+                    copiedJiraId
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 border border-slate-600'
+                  }`}
+                  title={copiedJiraId ? 'Copied!' : 'Copy Jira ID'}
+                >
+                  {copiedJiraId ? (
+                    <>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-sm">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-sm">Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           )}
 

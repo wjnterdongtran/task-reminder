@@ -13,6 +13,7 @@ function dbRowToTask(row: any): Task {
     name: row.name,
     description: row.description || '',
     url: row.url || '',
+    jiraId: row.jira_id || undefined,
     status: row.status as TaskStatus,
     reminderInterval: row.reminder_interval,
     createdAt: row.created_at,
@@ -30,6 +31,7 @@ function taskToDbInsert(formData: TaskFormData) {
     name: formData.name,
     description: formData.description || '',
     url: formData.url || '',
+    jira_id: formData.jiraId || null,
     status: TaskStatus.WORKING,
     reminder_interval: formData.reminderInterval,
     color: formData.color || null,
@@ -104,6 +106,7 @@ export async function updateTask(
   if (updates.name !== undefined) dbUpdates.name = updates.name;
   if (updates.description !== undefined) dbUpdates.description = updates.description;
   if (updates.url !== undefined) dbUpdates.url = updates.url;
+  if (updates.jiraId !== undefined) dbUpdates.jira_id = updates.jiraId;
   if (updates.status !== undefined) dbUpdates.status = updates.status;
   if (updates.reminderInterval !== undefined)
     dbUpdates.reminder_interval = updates.reminderInterval;

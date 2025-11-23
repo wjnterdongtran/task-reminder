@@ -67,6 +67,7 @@ export type Database = {
           name: string;
           description: string;
           url: string;
+          jira_id: string | null;
           status: number;
           reminder_interval: number;
           created_at: string;
@@ -82,6 +83,7 @@ export type Database = {
           name: string;
           description?: string;
           url?: string;
+          jira_id?: string | null;
           status?: number;
           reminder_interval?: number;
           created_at?: string;
@@ -97,6 +99,7 @@ export type Database = {
           name?: string;
           description?: string;
           url?: string;
+          jira_id?: string | null;
           status?: number;
           reminder_interval?: number;
           created_at?: string;
