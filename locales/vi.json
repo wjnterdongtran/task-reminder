@@ -8,7 +8,10 @@
     "edit": "Sửa",
     "add": "Thêm",
     "search": "Tìm kiếm",
-    "filter": "Lọc"
+    "filter": "Lọc",
+    "loading": "Đang tải...",
+    "generating": "Đang tạo...",
+    "saving": "Đang lưu..."
   },
   "taskStatus": {
     "init": "Cần Làm",
@@ -59,6 +62,40 @@
     "newTask": "Công Việc Mới",
     "toggleView": "Chuyển Giao Diện",
     "listView": "Dạng Danh Sách",
-    "boardView": "Dạng Bảng"
+    "boardView": "Dạng Bảng",
+    "vocabulary": "Từ Vựng",
+    "tasks": "Công Việc"
+  },
+  "vocabulary": {
+    "title": "Từ Vựng Tiếng Anh",
+    "searchPlaceholder": "Tìm từ, nghĩa...",
+    "addWord": "Thêm Từ",
+    "word": "Từ",
+    "ipa": "Phiên Âm",
+    "meaning": "Nghĩa",
+    "usage": "Cách Sử Dụng",
+    "culturalContext": "Văn Hoá Liên Quan",
+    "favorite": "Yêu Thích",
+    "reviews": "Lượt Xem",
+    "noWords": "Không có từ nào",
+    "noWordsHint": "Thêm từ đầu tiên để bắt đầu học",
+    "wordExists": "Từ này đã tồn tại",
+    "generateContent": "Tạo với AI",
+    "addToList": "Thêm Vào Danh Sách",
+    "wordPlaceholder": "Nhập từ hoặc cụm từ...",
+    "confirmDelete": "Nhấn lại để xác nhận",
+    "lastReviewed": "Xem lần cuối",
+    "viewDetails": "Xem Chi Tiết",
+    "allWords": "Tất Cả",
+    "favorites": "Yêu Thích",
+    "wordCount": "{{count}} từ",
+    "wordCount_plural": "{{count}} từ",
+    "manualCreate": "Thêm Từ Thủ Công",
+    "aiGenerate": "Tạo với AI",
+    "wordRequired": "Vui lòng nhập từ",
+    "meaningRequired": "Vui lòng nhập nghĩa",
+    "meaningPlaceholder": "Nhập nghĩa tiếng Việt...",
+    "usagePlaceholder": "Nhập ví dụ cách sử dụng...",
+    "culturalContextPlaceholder": "Nhập ngữ cảnh văn hóa, nguồn gốc từ..."
   }
 }

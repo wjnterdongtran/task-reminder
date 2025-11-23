@@ -9,6 +9,58 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      vocabulary: {
+        Row: {
+          id: string;
+          word: string;
+          ipa: string;
+          meaning: string;
+          usage: string;
+          cultural_context: string;
+          created_at: string;
+          updated_at: string;
+          user_id: string | null;
+          is_favorite: boolean;
+          review_count: number;
+          last_reviewed_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          word: string;
+          ipa?: string;
+          meaning?: string;
+          usage?: string;
+          cultural_context?: string;
+          created_at?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          is_favorite?: boolean;
+          review_count?: number;
+          last_reviewed_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          word?: string;
+          ipa?: string;
+          meaning?: string;
+          usage?: string;
+          cultural_context?: string;
+          created_at?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          is_favorite?: boolean;
+          review_count?: number;
+          last_reviewed_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "vocabulary_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       tasks: {
         Row: {
           id: string;
