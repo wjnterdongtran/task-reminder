@@ -17,35 +17,19 @@ export const VOCABULARY_SYSTEM_PROMPT = `You are an expert English language teac
 
 Your task is to provide comprehensive, structured information about English words/phrases to help Vietnamese learners understand and remember them effectively.
 
-IMPORTANT GUIDELINES:
+CRITICAL: You MUST output ONLY a valid JSON object. No markdown, no code blocks, no explanations, no text before or after the JSON. Start your response with { and end with }.
 
-1. **IPA Pronunciation**:
-   - Provide BOTH British (UK) and American (US) pronunciations
-   - Use standard IPA (International Phonetic Alphabet) notation
-   - Format with slashes: /ˈbrɪtɪʃ/ and /əˈmerɪkən/
+CONTENT GUIDELINES:
 
-2. **Meaning**:
-   - Specify the part of speech in Vietnamese (e.g., "Động từ", "Danh từ", "Tính từ", "Cụm động từ")
-   - Provide clear, detailed Vietnamese translation explaining the meaning
-   - Use simple, clear Vietnamese that's easy to understand
+1. **IPA Pronunciation**: Provide BOTH British (UK) and American (US) pronunciations using standard IPA notation with slashes: /ˈbrɪtɪʃ/
 
-3. **Usage**:
-   - Provide 2-3 example sentences showing different contexts
-   - Use **bold** markdown to highlight the target word/phrase in examples
-   - List common collocations (words that often appear together)
-   - Include grammar patterns showing how to use the word
-   - Describe common mistakes Vietnamese learners make with this word
+2. **Meaning**: Specify part of speech in Vietnamese (e.g., "Động từ", "Danh từ", "Tính từ") and provide clear Vietnamese translation
 
-4. **Cultural Context**:
-   - Include etymology (word origin) in Vietnamese
-   - Explain cultural significance in English-speaking countries
-   - List related expressions with brief explanations
-   - Add nuances specifically for Vietnamese learners
+3. **Usage**: Include 2-3 example sentences with **bold** markdown highlighting the target word, common collocations, grammar patterns, and common mistakes
 
-RESPONSE FORMAT:
-You MUST respond in valid JSON format only. Do not include any text outside the JSON object.
-Use this EXACT structure:
+4. **Cultural Context**: Include etymology, cultural significance, related expressions, and nuances for Vietnamese learners
 
+OUTPUT FORMAT - Return this EXACT JSON structure (no additional text):
 {
   "word": "the exact word/phrase",
   "ipa": {
@@ -53,34 +37,20 @@ Use this EXACT structure:
     "us": "/US pronunciation/"
   },
   "meaning": {
-    "partOfSpeech": "Loại từ bằng tiếng Việt (ví dụ: Động từ, Danh từ, Tính từ)",
-    "vietnamese": "Nghĩa tiếng Việt chi tiết, giải thích đầy đủ ý nghĩa và cách dùng"
+    "partOfSpeech": "Loại từ bằng tiếng Việt",
+    "vietnamese": "Nghĩa tiếng Việt chi tiết"
   },
   "usage": {
-    "examples": [
-      "First example sentence with **word** highlighted",
-      "Second example sentence with **word** highlighted",
-      "Third example sentence with **word** highlighted"
-    ],
-    "collocations": [
-      "collocation 1",
-      "collocation 2",
-      "collocation 3"
-    ],
-    "grammarPatterns": [
-      "**pattern 1** (explanation)",
-      "**pattern 2** (explanation)"
-    ],
-    "commonMistakes": "Description of common mistakes Vietnamese learners make with this word"
+    "examples": ["Example 1 with **word**", "Example 2 with **word**", "Example 3 with **word**"],
+    "collocations": ["collocation 1", "collocation 2", "collocation 3"],
+    "grammarPatterns": ["**pattern 1** (explanation)", "**pattern 2** (explanation)"],
+    "commonMistakes": "Description of common mistakes"
   },
   "culturalContext": {
     "etymology": "Nguồn gốc từ bằng tiếng Việt",
-    "culturalSignificance": "Ý nghĩa văn hóa trong các nước nói tiếng Anh",
-    "relatedExpressions": [
-      "**expression 1:** explanation",
-      "**expression 2:** explanation"
-    ],
-    "nuancesForVietnameseLearners": "Các sắc thái đặc biệt dành cho người học tiếng Việt"
+    "culturalSignificance": "Ý nghĩa văn hóa",
+    "relatedExpressions": ["**expression 1:** explanation", "**expression 2:** explanation"],
+    "nuancesForVietnameseLearners": "Các sắc thái đặc biệt cho người Việt"
   }
 }`;
 
@@ -88,80 +58,89 @@ Use this EXACT structure:
  * Generate the user prompt for a specific word
  */
 export function generateVocabularyUserPrompt(word: string): string {
-  return `Please provide comprehensive, structured information about the English word/phrase: "${word}"
+  return `Generate vocabulary information for: "${word}"
 
-Generate a complete response with:
-1. IPA pronunciation for BOTH UK and US
-2. Part of speech and Vietnamese meaning
-3. 2-3 example sentences with the word highlighted in **bold**
-4. Common collocations and grammar patterns
-5. Common mistakes Vietnamese learners make
-6. Etymology, cultural significance, and related expressions
-
-Remember: Response must be valid JSON only, following the exact structure specified.`;
+IMPORTANT: Output ONLY the JSON object. No markdown code blocks, no explanations. Start with { and end with }.`;
 }
 
 /**
  * Parse AI response to VocabularyAIResponse
- * Handles various response formats and edge cases
+ * With JSON mode enabled on providers, response should be clean JSON
  */
 export function parseVocabularyResponse(response: string, originalWord: string): VocabularyAIResponse {
   try {
-    // Try to extract JSON from the response
+    // Trim and clean the response
     let jsonStr = response.trim();
 
-    // Handle markdown code blocks
+    // Fallback: Handle markdown code blocks if provider still wraps in them
     const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (jsonMatch) {
+      console.warn('[parseVocabularyResponse] Response contained markdown code block - extracting JSON');
       jsonStr = jsonMatch[1].trim();
     }
 
-    // Try to find JSON object in the response
-    const jsonObjectMatch = jsonStr.match(/\{[\s\S]*\}/);
-    if (jsonObjectMatch) {
-      jsonStr = jsonObjectMatch[0];
+    // Fallback: Try to find JSON object if there's extra text
+    if (!jsonStr.startsWith('{')) {
+      const jsonObjectMatch = jsonStr.match(/\{[\s\S]*\}/);
+      if (jsonObjectMatch) {
+        console.warn('[parseVocabularyResponse] Response had prefix text - extracting JSON object');
+        jsonStr = jsonObjectMatch[0];
+      }
     }
 
+    // Parse the JSON
     const parsed = JSON.parse(jsonStr);
 
-    // Handle new structured format
-    return {
+    // Validate required fields exist
+    if (!parsed.word && !parsed.ipa && !parsed.meaning) {
+      console.error('[parseVocabularyResponse] Parsed JSON missing required fields:', Object.keys(parsed));
+      throw new Error('Invalid response structure - missing required fields');
+    }
+
+    // Build response with proper type handling
+    const result: VocabularyAIResponse = {
       word: parsed.word || originalWord,
       ipa: typeof parsed.ipa === 'object'
-        ? parsed.ipa
-        : { uk: parsed.ipa || '', us: parsed.ipa || '' },
+        ? { uk: parsed.ipa.uk || '', us: parsed.ipa.us || '' }
+        : { uk: String(parsed.ipa || ''), us: String(parsed.ipa || '') },
       meaning: typeof parsed.meaning === 'object'
-        ? parsed.meaning
-        : { partOfSpeech: '', vietnamese: parsed.meaning || '' },
+        ? { partOfSpeech: parsed.meaning.partOfSpeech || '', vietnamese: parsed.meaning.vietnamese || '' }
+        : { partOfSpeech: '', vietnamese: String(parsed.meaning || '') },
       usage: typeof parsed.usage === 'object'
         ? {
-            examples: parsed.usage.examples || [],
-            collocations: parsed.usage.collocations || [],
-            grammarPatterns: parsed.usage.grammarPatterns || [],
-            commonMistakes: parsed.usage.commonMistakes || '',
+            examples: Array.isArray(parsed.usage.examples) ? parsed.usage.examples : [],
+            collocations: Array.isArray(parsed.usage.collocations) ? parsed.usage.collocations : [],
+            grammarPatterns: Array.isArray(parsed.usage.grammarPatterns) ? parsed.usage.grammarPatterns : [],
+            commonMistakes: String(parsed.usage.commonMistakes || ''),
           }
-        : { examples: [], collocations: [], grammarPatterns: [], commonMistakes: parsed.usage || '' },
-      culturalContext: typeof parsed.culturalContext === 'object' || typeof parsed.cultural_context === 'object'
-        ? {
-            etymology: (parsed.culturalContext || parsed.cultural_context)?.etymology || '',
-            culturalSignificance: (parsed.culturalContext || parsed.cultural_context)?.culturalSignificance || '',
-            relatedExpressions: (parsed.culturalContext || parsed.cultural_context)?.relatedExpressions || [],
-            nuancesForVietnameseLearners: (parsed.culturalContext || parsed.cultural_context)?.nuancesForVietnameseLearners || '',
-          }
-        : {
-            etymology: '',
-            culturalSignificance: parsed.culturalContext || parsed.cultural_context || '',
-            relatedExpressions: [],
-            nuancesForVietnameseLearners: ''
-          },
+        : { examples: [], collocations: [], grammarPatterns: [], commonMistakes: '' },
+      culturalContext: (() => {
+        const ctx = parsed.culturalContext || parsed.cultural_context;
+        if (typeof ctx === 'object' && ctx !== null) {
+          return {
+            etymology: String(ctx.etymology || ''),
+            culturalSignificance: String(ctx.culturalSignificance || ''),
+            relatedExpressions: Array.isArray(ctx.relatedExpressions) ? ctx.relatedExpressions : [],
+            nuancesForVietnameseLearners: String(ctx.nuancesForVietnameseLearners || ''),
+          };
+        }
+        return { etymology: '', culturalSignificance: '', relatedExpressions: [], nuancesForVietnameseLearners: '' };
+      })(),
     };
+
+    return result;
   } catch (error) {
-    console.error('Failed to parse AI response:', error);
-    // Return a default structure with the original word
+    // Log detailed error information for debugging
+    console.error('[parseVocabularyResponse] Failed to parse AI response:');
+    console.error('[parseVocabularyResponse] Error:', error instanceof Error ? error.message : error);
+    console.error('[parseVocabularyResponse] Raw response (first 500 chars):', response.substring(0, 500));
+    console.error('[parseVocabularyResponse] Response length:', response.length);
+
+    // Return a default structure with error message
     return {
       word: originalWord,
       ipa: { uk: '', us: '' },
-      meaning: { partOfSpeech: '', vietnamese: 'Failed to generate meaning. Please try again.' },
+      meaning: { partOfSpeech: '', vietnamese: 'Failed to parse AI response. Please try again.' },
       usage: { examples: [], collocations: [], grammarPatterns: [], commonMistakes: '' },
       culturalContext: { etymology: '', culturalSignificance: '', relatedExpressions: [], nuancesForVietnameseLearners: '' },
     };
