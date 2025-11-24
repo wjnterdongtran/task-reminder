@@ -47,7 +47,7 @@ export function getAIConfig(): AIServiceConfig {
 }
 
 /**
- * Call Google Gemini API
+ * Call Google Gemini API with JSON mode enabled
  */
 async function callGemini(
   systemPrompt: string,
@@ -73,6 +73,8 @@ async function callGemini(
         generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 2048,
+          // Force JSON output format
+          responseMimeType: 'application/json',
         },
       }),
     }
@@ -88,7 +90,7 @@ async function callGemini(
 }
 
 /**
- * Call OpenAI API
+ * Call OpenAI API with JSON mode enabled
  */
 async function callOpenAI(
   systemPrompt: string,
@@ -110,6 +112,8 @@ async function callOpenAI(
       ],
       temperature: 0.7,
       max_tokens: 2048,
+      // Force JSON output format
+      response_format: { type: 'json_object' },
     }),
   });
 
@@ -123,7 +127,7 @@ async function callOpenAI(
 }
 
 /**
- * Call Anthropic API
+ * Call Anthropic API with JSON prefill to force JSON output
  */
 async function callAnthropic(
   systemPrompt: string,
@@ -142,7 +146,11 @@ async function callAnthropic(
       model,
       max_tokens: 2048,
       system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
+      messages: [
+        { role: 'user', content: userPrompt },
+        // Prefill technique: start assistant response with { to force JSON output
+        { role: 'assistant', content: '{' },
+      ],
     }),
   });
 
@@ -152,7 +160,9 @@ async function callAnthropic(
   }
 
   const data = await response.json();
-  return data.content?.[0]?.text || '';
+  const text = data.content?.[0]?.text || '';
+  // Prepend the { that was used as prefill since the response continues from there
+  return '{' + text;
 }
 
 /**
