@@ -97,14 +97,14 @@ export default function VocabularyTable({
                             className="shrink-0"
                         />
                     )}
-                    <span className="text-slate-300 line-clamp-2">
+                    <span className="text-slate-300">
                         {parsed.meaning.vietnamese}
                     </span>
                 </div>
             );
         }
         return (
-            <p className="text-slate-300 line-clamp-2">
+            <p className="text-slate-300">
                 {typeof parsed.meaning === "string" ? parsed.meaning : ""}
             </p>
         );
@@ -231,161 +231,165 @@ export default function VocabularyTable({
                        overflow-hidden transition-all hover:border-slate-600/50"
                         >
                             {/* Main Row */}
-                            <div className="p-4 flex items-start gap-4">
-                                {/* Favorite Button */}
-                                <button
-                                    onClick={() =>
-                                        onToggleFavorite(
-                                            vocab.id,
-                                            !vocab.isFavorite
-                                        )
-                                    }
-                                    className={`shrink-0 p-2 rounded-lg transition-all ${
-                                        vocab.isFavorite
-                                            ? "text-yellow-400 bg-yellow-500/10"
-                                            : "text-slate-500 hover:text-yellow-400 hover:bg-yellow-500/10"
-                                    }`}
-                                >
-                                    <svg
-                                        className="w-5 h-5"
-                                        fill={
-                                            vocab.isFavorite
-                                                ? "currentColor"
-                                                : "none"
-                                        }
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                                        />
-                                    </svg>
-                                </button>
-
-                                {/* Content */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-baseline gap-2 flex-wrap">
+                            <div className="p-4">
+                                {/* First Row: Favorite + Word + IPA + Actions */}
+                                <div className="flex items-center gap-3">
+                                    {/* Word + IPA */}
+                                    <div className="flex-1 min-w-0 flex items-baseline gap-2 flex-wrap">
                                         <h4 className="text-lg font-bold text-cyan-400 font-mono">
                                             {vocab.word}
                                         </h4>
                                         {renderIPA(vocab)}
                                     </div>
-                                    <div className="mt-1">
-                                        {renderMeaningSummary(vocab)}
-                                    </div>
 
-                                    {/* Metadata */}
-                                    <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
-                                        <span>
-                                            {t("vocabulary.reviews")}:{" "}
-                                            {vocab.reviewCount}
-                                        </span>
-                                        {vocab.lastReviewedAt && (
-                                            <span>
-                                                {t("vocabulary.lastReviewed")}:{" "}
-                                                {format(
-                                                    new Date(
-                                                        vocab.lastReviewedAt
-                                                    ),
-                                                    "dd/MM/yyyy"
-                                                )}
-                                            </span>
-                                        )}
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <button
+                                            onClick={() =>
+                                                setExpandedId(
+                                                    expandedId === vocab.id
+                                                        ? null
+                                                        : vocab.id
+                                                )
+                                            }
+                                            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700/50
+                                 rounded-lg transition-all"
+                                            title={
+                                                expandedId === vocab.id
+                                                    ? t("taskItem.collapse")
+                                                    : t("taskItem.expand")
+                                            }
+                                        >
+                                            <svg
+                                                className={`w-5 h-5 transform transition-transform ${
+                                                    expandedId === vocab.id
+                                                        ? "rotate-180"
+                                                        : ""
+                                                }`}
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M19 9l-7 7-7-7"
+                                                />
+                                            </svg>
+                                        </button>
+                                        {/* Favorite Button */}
+                                        <button
+                                            onClick={() =>
+                                                onToggleFavorite(
+                                                    vocab.id,
+                                                    !vocab.isFavorite
+                                                )
+                                            }
+                                            className={`shrink-0 p-2 rounded-lg transition-all ${
+                                                vocab.isFavorite
+                                                    ? "text-yellow-400 bg-yellow-500/10"
+                                                    : "text-slate-500 hover:text-yellow-400 hover:bg-yellow-500/10"
+                                            }`}
+                                        >
+                                            <svg
+                                                className="w-5 h-5"
+                                                fill={
+                                                    vocab.isFavorite
+                                                        ? "currentColor"
+                                                        : "none"
+                                                }
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                                                />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onClick={() => onViewDetails(vocab)}
+                                            className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10
+                                 rounded-lg transition-all"
+                                            title={t("vocabulary.viewDetails")}
+                                        >
+                                            <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                />
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                handleDelete(vocab.id)
+                                            }
+                                            className={`p-2 rounded-lg transition-all ${
+                                                deleteConfirm === vocab.id
+                                                    ? "text-red-400 bg-red-500/20"
+                                                    : "text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+                                            }`}
+                                            title={
+                                                deleteConfirm === vocab.id
+                                                    ? t(
+                                                          "vocabulary.confirmDelete"
+                                                      )
+                                                    : t("common.delete")
+                                            }
+                                        >
+                                            <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
 
-                                {/* Actions */}
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <button
-                                        onClick={() =>
-                                            setExpandedId(
-                                                expandedId === vocab.id
-                                                    ? null
-                                                    : vocab.id
-                                            )
-                                        }
-                                        className="p-2 text-slate-400 hover:text-white hover:bg-slate-700/50
-                             rounded-lg transition-all"
-                                        title={
-                                            expandedId === vocab.id
-                                                ? t("taskItem.collapse")
-                                                : t("taskItem.expand")
-                                        }
-                                    >
-                                        <svg
-                                            className={`w-5 h-5 transform transition-transform ${
-                                                expandedId === vocab.id
-                                                    ? "rotate-180"
-                                                    : ""
-                                            }`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M19 9l-7 7-7-7"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <button
-                                        onClick={() => onViewDetails(vocab)}
-                                        className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10
-                             rounded-lg transition-all"
-                                        title={t("vocabulary.viewDetails")}
-                                    >
-                                        <svg
-                                            className="w-5 h-5"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                            />
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(vocab.id)}
-                                        className={`p-2 rounded-lg transition-all ${
-                                            deleteConfirm === vocab.id
-                                                ? "text-red-400 bg-red-500/20"
-                                                : "text-slate-400 hover:text-red-400 hover:bg-red-500/10"
-                                        }`}
-                                        title={
-                                            deleteConfirm === vocab.id
-                                                ? t("vocabulary.confirmDelete")
-                                                : t("common.delete")
-                                        }
-                                    >
-                                        <svg
-                                            className="w-5 h-5"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                            />
-                                        </svg>
-                                    </button>
+                                {/* Second Row: Meaning Summary */}
+                                <div className="mt-3">
+                                    {renderMeaningSummary(vocab)}
+                                </div>
+
+                                {/* Third Row: Metadata */}
+                                <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                                    <span>
+                                        {t("vocabulary.reviews")}:{" "}
+                                        {vocab.reviewCount}
+                                    </span>
+                                    {vocab.lastReviewedAt && (
+                                        <span>
+                                            {t("vocabulary.lastReviewed")}:{" "}
+                                            {format(
+                                                new Date(vocab.lastReviewedAt),
+                                                "dd/MM/yyyy"
+                                            )}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
