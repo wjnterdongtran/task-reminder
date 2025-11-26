@@ -3,7 +3,7 @@
  * Optimized prompts for generating comprehensive vocabulary content
  */
 
-import { VocabularyAIResponse } from '@/types/vocabulary';
+import { VocabularyAIResponse } from "@/types/vocabulary";
 
 /**
  * System prompt for vocabulary generation
@@ -58,7 +58,7 @@ OUTPUT FORMAT - Return this EXACT JSON structure (no additional text):
  * Generate the user prompt for a specific word
  */
 export function generateVocabularyUserPrompt(word: string): string {
-  return `Generate vocabulary information for: "${word}"
+    return `Generate vocabulary information for: "${word}"
 
 IMPORTANT: Output ONLY the JSON object. No markdown code blocks, no explanations. Start with { and end with }.`;
 }
@@ -67,116 +67,229 @@ IMPORTANT: Output ONLY the JSON object. No markdown code blocks, no explanations
  * Parse AI response to VocabularyAIResponse
  * With JSON mode enabled on providers, response should be clean JSON
  */
-export function parseVocabularyResponse(response: string, originalWord: string): VocabularyAIResponse {
-  try {
-    // Trim and clean the response
-    let jsonStr = response.trim();
+export function parseVocabularyResponse(
+    response: string,
+    originalWord: string
+): VocabularyAIResponse {
+    try {
+        // Trim and clean the response
+        let jsonStr = response.trim();
 
-    // Fallback: Handle markdown code blocks if provider still wraps in them
-    const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonMatch) {
-      console.warn('[parseVocabularyResponse] Response contained markdown code block - extracting JSON');
-      jsonStr = jsonMatch[1].trim();
-    }
-
-    // Fallback: Try to find JSON object if there's extra text
-    if (!jsonStr.startsWith('{')) {
-      const jsonObjectMatch = jsonStr.match(/\{[\s\S]*\}/);
-      if (jsonObjectMatch) {
-        console.warn('[parseVocabularyResponse] Response had prefix text - extracting JSON object');
-        jsonStr = jsonObjectMatch[0];
-      }
-    }
-
-    // Parse the JSON
-    const parsed = JSON.parse(jsonStr);
-
-    // Validate required fields exist
-    if (!parsed.word && !parsed.ipa && !parsed.meaning) {
-      console.error('[parseVocabularyResponse] Parsed JSON missing required fields:', Object.keys(parsed));
-      throw new Error('Invalid response structure - missing required fields');
-    }
-
-    // Build response with proper type handling
-    const result: VocabularyAIResponse = {
-      word: parsed.word || originalWord,
-      ipa: typeof parsed.ipa === 'object'
-        ? { uk: parsed.ipa.uk || '', us: parsed.ipa.us || '' }
-        : { uk: String(parsed.ipa || ''), us: String(parsed.ipa || '') },
-      meaning: typeof parsed.meaning === 'object'
-        ? { partOfSpeech: parsed.meaning.partOfSpeech || '', vietnamese: parsed.meaning.vietnamese || '' }
-        : { partOfSpeech: '', vietnamese: String(parsed.meaning || '') },
-      usage: typeof parsed.usage === 'object'
-        ? {
-            examples: Array.isArray(parsed.usage.examples) ? parsed.usage.examples : [],
-            collocations: Array.isArray(parsed.usage.collocations) ? parsed.usage.collocations : [],
-            grammarPatterns: Array.isArray(parsed.usage.grammarPatterns) ? parsed.usage.grammarPatterns : [],
-            commonMistakes: String(parsed.usage.commonMistakes || ''),
-          }
-        : { examples: [], collocations: [], grammarPatterns: [], commonMistakes: '' },
-      culturalContext: (() => {
-        const ctx = parsed.culturalContext || parsed.cultural_context;
-        if (typeof ctx === 'object' && ctx !== null) {
-          return {
-            etymology: String(ctx.etymology || ''),
-            culturalSignificance: String(ctx.culturalSignificance || ''),
-            relatedExpressions: Array.isArray(ctx.relatedExpressions) ? ctx.relatedExpressions : [],
-            nuancesForVietnameseLearners: String(ctx.nuancesForVietnameseLearners || ''),
-          };
+        // Fallback: Handle markdown code blocks if provider still wraps in them
+        const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (jsonMatch) {
+            console.warn(
+                "[parseVocabularyResponse] Response contained markdown code block - extracting JSON"
+            );
+            jsonStr = jsonMatch[1].trim();
         }
-        return { etymology: '', culturalSignificance: '', relatedExpressions: [], nuancesForVietnameseLearners: '' };
-      })(),
-    };
 
-    return result;
-  } catch (error) {
-    // Log detailed error information for debugging
-    console.error('[parseVocabularyResponse] Failed to parse AI response:');
-    console.error('[parseVocabularyResponse] Error:', error instanceof Error ? error.message : error);
-    console.error('[parseVocabularyResponse] Raw response (first 500 chars):', response.substring(0, 500));
-    console.error('[parseVocabularyResponse] Response length:', response.length);
+        // Fallback: Try to find JSON object if there's extra text
+        if (!jsonStr.startsWith("{")) {
+            const jsonObjectMatch = jsonStr.match(/\{[\s\S]*\}/);
+            if (jsonObjectMatch) {
+                console.warn(
+                    "[parseVocabularyResponse] Response had prefix text - extracting JSON object"
+                );
+                jsonStr = jsonObjectMatch[0];
+            }
+        }
 
-    // Return a default structure with error message
-    return {
-      word: originalWord,
-      ipa: { uk: '', us: '' },
-      meaning: { partOfSpeech: '', vietnamese: 'Failed to parse AI response. Please try again.' },
-      usage: { examples: [], collocations: [], grammarPatterns: [], commonMistakes: '' },
-      culturalContext: { etymology: '', culturalSignificance: '', relatedExpressions: [], nuancesForVietnameseLearners: '' },
-    };
-  }
+        // Additional safety: Remove any trailing text after the last }
+        const lastBraceIndex = jsonStr.lastIndexOf("}");
+        if (lastBraceIndex !== -1 && lastBraceIndex < jsonStr.length - 1) {
+            console.warn(
+                "[parseVocabularyResponse] Removing trailing text after JSON"
+            );
+            jsonStr = jsonStr.substring(0, lastBraceIndex + 1);
+        }
+
+        // Safety check: Ensure we have valid JSON structure
+        if (!jsonStr.startsWith("{") || !jsonStr.endsWith("}")) {
+            throw new Error(
+                `Invalid JSON structure - must start with { and end with }. Got: ${jsonStr.substring(0, 100)}...`
+            );
+        }
+
+        // Parse the JSON
+        const parsed = JSON.parse(jsonStr);
+
+        // Validate required fields exist
+        if (!parsed.word && !parsed.ipa && !parsed.meaning) {
+            console.error(
+                "[parseVocabularyResponse] Parsed JSON missing required fields:",
+                Object.keys(parsed)
+            );
+            throw new Error(
+                "Invalid response structure - missing required fields"
+            );
+        }
+
+        // Build response with proper type handling
+        const result: VocabularyAIResponse = {
+            word: parsed.word || originalWord,
+            ipa:
+                typeof parsed.ipa === "object"
+                    ? { uk: parsed.ipa.uk || "", us: parsed.ipa.us || "" }
+                    : {
+                          uk: String(parsed.ipa || ""),
+                          us: String(parsed.ipa || ""),
+                      },
+            meaning:
+                typeof parsed.meaning === "object"
+                    ? {
+                          partOfSpeech: parsed.meaning.partOfSpeech || "",
+                          vietnamese: parsed.meaning.vietnamese || "",
+                      }
+                    : {
+                          partOfSpeech: "",
+                          vietnamese: String(parsed.meaning || ""),
+                      },
+            usage:
+                typeof parsed.usage === "object"
+                    ? {
+                          examples: Array.isArray(parsed.usage.examples)
+                              ? parsed.usage.examples
+                              : [],
+                          collocations: Array.isArray(parsed.usage.collocations)
+                              ? parsed.usage.collocations
+                              : [],
+                          grammarPatterns: Array.isArray(
+                              parsed.usage.grammarPatterns
+                          )
+                              ? parsed.usage.grammarPatterns
+                              : [],
+                          commonMistakes: String(
+                              parsed.usage.commonMistakes || ""
+                          ),
+                      }
+                    : {
+                          examples: [],
+                          collocations: [],
+                          grammarPatterns: [],
+                          commonMistakes: "",
+                      },
+            culturalContext: (() => {
+                const ctx = parsed.culturalContext || parsed.cultural_context;
+                if (typeof ctx === "object" && ctx !== null) {
+                    return {
+                        etymology: String(ctx.etymology || ""),
+                        culturalSignificance: String(
+                            ctx.culturalSignificance || ""
+                        ),
+                        relatedExpressions: Array.isArray(
+                            ctx.relatedExpressions
+                        )
+                            ? ctx.relatedExpressions
+                            : [],
+                        nuancesForVietnameseLearners: String(
+                            ctx.nuancesForVietnameseLearners || ""
+                        ),
+                    };
+                }
+                return {
+                    etymology: "",
+                    culturalSignificance: "",
+                    relatedExpressions: [],
+                    nuancesForVietnameseLearners: "",
+                };
+            })(),
+        };
+
+        return result;
+    } catch (error) {
+        // Log detailed error information for debugging
+        console.error("[parseVocabularyResponse] Failed to parse AI response:");
+        console.error(
+            "[parseVocabularyResponse] Error:",
+            error instanceof Error ? error.message : error
+        );
+        console.error(
+            "[parseVocabularyResponse] Raw response (first 1000 chars):",
+            response.substring(0, 1000)
+        );
+        console.error(
+            "[parseVocabularyResponse] Response length:",
+            response.length
+        );
+
+        // Log character codes around potential problem areas
+        if (error instanceof SyntaxError) {
+            console.error(
+                "[parseVocabularyResponse] SyntaxError detected - checking for special characters"
+            );
+            // Find unterminated strings by looking for unescaped quotes
+            const quotePositions = [];
+            for (let i = 0; i < Math.min(response.length, 1000); i++) {
+                if (response[i] === '"' && (i === 0 || response[i - 1] !== '\\')) {
+                    quotePositions.push(i);
+                }
+            }
+            console.error(
+                "[parseVocabularyResponse] Found",
+                quotePositions.length,
+                "unescaped quotes in first 1000 chars"
+            );
+        }
+
+        // Return a default structure with error message
+        return {
+            word: originalWord,
+            ipa: { uk: "", us: "" },
+            meaning: {
+                partOfSpeech: "",
+                vietnamese: "Failed to parse AI response. Please try again.",
+            },
+            usage: {
+                examples: [],
+                collocations: [],
+                grammarPatterns: [],
+                commonMistakes: "",
+            },
+            culturalContext: {
+                etymology: "",
+                culturalSignificance: "",
+                relatedExpressions: [],
+                nuancesForVietnameseLearners: "",
+            },
+        };
+    }
 }
 
 /**
  * Convert structured AI response to flat strings for database storage
  */
 export function flattenVocabularyResponse(response: VocabularyAIResponse): {
-  word: string;
-  ipa: string;
-  meaning: string;
-  usage: string;
-  culturalContext: string;
+    word: string;
+    ipa: string;
+    meaning: string;
+    usage: string;
+    culturalContext: string;
 } {
-  return {
-    word: response.word,
-    ipa: JSON.stringify(response.ipa),
-    meaning: JSON.stringify(response.meaning),
-    usage: JSON.stringify(response.usage),
-    culturalContext: JSON.stringify(response.culturalContext),
-  };
+    return {
+        word: response.word,
+        ipa: JSON.stringify(response.ipa),
+        meaning: JSON.stringify(response.meaning),
+        usage: JSON.stringify(response.usage),
+        culturalContext: JSON.stringify(response.culturalContext),
+    };
 }
 
 /**
  * Validate vocabulary response quality
  */
-export function validateVocabularyResponse(response: VocabularyAIResponse): boolean {
-  const hasWord = response.word.length > 0;
-  const hasMeaning = typeof response.meaning === 'object'
-    ? response.meaning.vietnamese.length > 10
-    : false;
-  const hasUsage = typeof response.usage === 'object'
-    ? response.usage.examples.length > 0
-    : false;
+export function validateVocabularyResponse(
+    response: VocabularyAIResponse
+): boolean {
+    const hasWord = response.word.length > 0;
+    const hasMeaning =
+        typeof response.meaning === "object"
+            ? response.meaning.vietnamese.length > 10
+            : false;
+    const hasUsage =
+        typeof response.usage === "object"
+            ? response.usage.examples.length > 0
+            : false;
 
-  return hasWord && hasMeaning && hasUsage;
+    return hasWord && hasMeaning && hasUsage;
 }
