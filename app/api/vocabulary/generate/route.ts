@@ -16,6 +16,8 @@ interface GenerateRequest {
     word: string;
 }
 
+const MAX_TOKENS = 8192;
+
 /**
  * Call Google Gemini API
  */
@@ -40,7 +42,7 @@ async function callGemini(
                 ],
                 generationConfig: {
                     temperature: 0.7,
-                    maxOutputTokens: 2048,
+                    maxOutputTokens: MAX_TOKENS,
                     responseMimeType: "application/json",
                 },
             }),
@@ -78,7 +80,7 @@ async function callOpenAI(
                 { role: "user", content: userPrompt },
             ],
             temperature: 0.7,
-            max_tokens: 2048,
+            max_tokens: MAX_TOKENS,
             response_format: { type: "json_object" },
         }),
     });
@@ -110,7 +112,7 @@ async function callAnthropic(
         },
         body: JSON.stringify({
             model,
-            max_tokens: 2048,
+            max_tokens: MAX_TOKENS,
             system: systemPrompt,
             messages: [{ role: "user", content: userPrompt }],
         }),
