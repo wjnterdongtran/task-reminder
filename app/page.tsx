@@ -47,6 +47,7 @@ export default function Home() {
           name: data.name,
           description: data.description,
           url: data.url,
+          jiraId: data.jiraId,
           reminderInterval: data.reminderInterval,
           color: data.color,
         });
@@ -247,6 +248,7 @@ export default function Home() {
                 name: editingTask.name,
                 description: editingTask.description,
                 url: editingTask.url,
+                jiraId: editingTask.jiraId,
                 reminderInterval: editingTask.reminderInterval,
                 color: editingTask.color,
               }}
