@@ -112,7 +112,8 @@ export async function updateTask(
     dbUpdates.reminder_interval = updates.reminderInterval;
   if (updates.lastRemindedAt !== undefined)
     dbUpdates.last_reminded_at = updates.lastRemindedAt;
-  if (updates.color !== undefined) dbUpdates.color = updates.color;
+  // Handle color specially to allow clearing (undefined -> null)
+  if ('color' in updates) dbUpdates.color = updates.color || null;
   if (updates.isPinned !== undefined) dbUpdates.is_pinned = updates.isPinned;
   if (updates.pinnedAt !== undefined) dbUpdates.pinned_at = updates.pinnedAt;
 
