@@ -47,7 +47,7 @@ export default function Home() {
           name: data.name,
           description: data.description,
           url: data.url,
-          jiraId: data.jiraId,
+          jiraId: data.jiraId || null,
           reminderInterval: data.reminderInterval,
           color: data.color,
         });
