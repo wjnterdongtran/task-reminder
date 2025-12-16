@@ -267,6 +267,18 @@ export function PartOfSpeechBadge({
 // Meaning Display Component
 // ============================================
 
+/**
+ * Formats meaning text by adding line breaks before numbered definitions
+ * Example: "1. First meaning. 2. Second meaning." -> "1. First meaning.\n2. Second meaning."
+ */
+function formatMeaningWithLineBreaks(text: string): string {
+    // Add line break before numbered items (e.g., "2. ", "3. ", etc.)
+    // but not before the first one if it starts with "1. "
+    return text.replace(/(\.\s*)(\d+\.\s)/g, (match, period, number) => {
+        return period + '\n' + number;
+    });
+}
+
 interface MeaningDisplayProps {
     meaning: Meaning | string;
     className?: string;
@@ -279,23 +291,29 @@ export function MeaningDisplay({
     if (!meaning) return null;
 
     if (isStructuredMeaning(meaning)) {
+        // Format the Vietnamese text to add line breaks between numbered meanings
+        const formattedVietnamese = formatMeaningWithLineBreaks(meaning.vietnamese);
+
         return (
             <div className={`space-y-2 ${className}`}>
                 {meaning.partOfSpeech && (
                     <PartOfSpeechBadge partOfSpeech={meaning.partOfSpeech} />
                 )}
                 <div className="text-white leading-relaxed">
-                    <MarkdownContent content={meaning.vietnamese} />
+                    <MarkdownContent content={formattedVietnamese} />
                 </div>
             </div>
         );
     }
 
+    // For simple string meanings, also apply formatting
+    const formattedMeaning = formatMeaningWithLineBreaks(String(meaning));
+
     return (
         <p
             className={`text-white whitespace-pre-wrap leading-relaxed ${className}`}
         >
-            {String(meaning)}
+            {formattedMeaning}
         </p>
     );
 }
