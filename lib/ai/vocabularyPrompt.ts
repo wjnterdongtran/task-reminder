@@ -107,7 +107,10 @@ export function parseVocabularyResponse(
         // Safety check: Ensure we have valid JSON structure
         if (!jsonStr.startsWith("{") || !jsonStr.endsWith("}")) {
             throw new Error(
-                `Invalid JSON structure - must start with { and end with }. Got: ${jsonStr.substring(0, 100)}...`
+                `Invalid JSON structure - must start with { and end with }. Got: ${jsonStr.substring(
+                    0,
+                    100
+                )}...`
             );
         }
 
@@ -206,7 +209,7 @@ export function parseVocabularyResponse(
         );
         console.error(
             "[parseVocabularyResponse] Raw response (first 1000 chars):",
-            response.substring(0, 1000)
+            response
         );
         console.error(
             "[parseVocabularyResponse] Response length:",
@@ -221,7 +224,10 @@ export function parseVocabularyResponse(
             // Find unterminated strings by looking for unescaped quotes
             const quotePositions = [];
             for (let i = 0; i < Math.min(response.length, 1000); i++) {
-                if (response[i] === '"' && (i === 0 || response[i - 1] !== '\\')) {
+                if (
+                    response[i] === '"' &&
+                    (i === 0 || response[i - 1] !== "\\")
+                ) {
                     quotePositions.push(i);
                 }
             }

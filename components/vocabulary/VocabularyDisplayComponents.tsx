@@ -271,11 +271,11 @@ export function PartOfSpeechBadge({
  * Formats meaning text by adding line breaks before numbered definitions
  * Example: "1. First meaning. 2. Second meaning." -> "1. First meaning.\n2. Second meaning."
  */
-function formatMeaningWithLineBreaks(text: string): string {
+export function formatMeaningWithLineBreaks(text: string): string {
     // Add line break before numbered items (e.g., "2. ", "3. ", etc.)
     // but not before the first one if it starts with "1. "
     return text.replace(/(\.\s*)(\d+\.\s)/g, (match, period, number) => {
-        return period + '\n' + number;
+        return period + "\n" + number;
     });
 }
 
@@ -292,7 +292,9 @@ export function MeaningDisplay({
 
     if (isStructuredMeaning(meaning)) {
         // Format the Vietnamese text to add line breaks between numbered meanings
-        const formattedVietnamese = formatMeaningWithLineBreaks(meaning.vietnamese);
+        const formattedVietnamese = formatMeaningWithLineBreaks(
+            meaning.vietnamese
+        );
 
         return (
             <div className={`space-y-2 ${className}`}>

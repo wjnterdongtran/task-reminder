@@ -15,6 +15,7 @@ import {
     PartOfSpeechBadge,
     UsageSectionDisplay,
     CulturalContextSectionDisplay,
+    formatMeaningWithLineBreaks,
 } from "./vocabulary/VocabularyDisplayComponents";
 
 interface VocabularyTableProps {
@@ -47,7 +48,6 @@ export default function VocabularyTable({
             : typeof parsed.meaning === "string"
             ? parsed.meaning
             : "";
-
         // Get searchable text from usage
         const usageText = isStructuredUsage(parsed.usage)
             ? parsed.usage.examples.join(" ") +
@@ -88,6 +88,10 @@ export default function VocabularyTable({
     const renderMeaningSummary = (vocab: Vocabulary) => {
         const parsed = parseVocabularyFields(vocab);
         if (isStructuredMeaning(parsed.meaning)) {
+            // Format the Vietnamese text to add line breaks between numbered meanings
+            const formattedVietnamese = formatMeaningWithLineBreaks(
+                parsed.meaning.vietnamese
+            );
             return (
                 <div className="flex flex-col items-start gap-2">
                     {parsed.meaning.partOfSpeech && (
@@ -97,8 +101,8 @@ export default function VocabularyTable({
                             className="shrink-0"
                         />
                     )}
-                    <span className="text-slate-300">
-                        {parsed.meaning.vietnamese}
+                    <span className="whitespace-pre-wrap text-slate-300">
+                        {formattedVietnamese}
                     </span>
                 </div>
             );
