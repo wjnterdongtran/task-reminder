@@ -82,20 +82,20 @@ export default function VocabularyForm({
                             variant="small"
                         />
                     )}
-                    <div className="text-white">
-                        <MarkdownContent content={meaning.vietnamese} />
+                    <div className="text-ink font-serif-alt">
+                        <MarkdownContent content={meaning.vietnamese} variant="eink" />
                     </div>
                 </div>
             );
         }
         return (
-            <p className="text-white whitespace-pre-wrap">{String(meaning)}</p>
+            <p className="text-ink whitespace-pre-wrap font-serif-alt">{String(meaning)}</p>
         );
     };
 
     return (
-        <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 mb-6 animate-slideUp">
-            <h3 className="text-lg font-semibold text-white mb-4 font-mono">
+        <div className="bg-paper rounded-2xl border border-stone p-6 mb-6 animate-slideUp">
+            <h3 className="text-lg font-semibold text-ink mb-4 font-serif">
                 {t("vocabulary.addWord")}
             </h3>
 
@@ -111,18 +111,17 @@ export default function VocabularyForm({
                     }}
                     onKeyDown={handleKeyDown}
                     placeholder={t("vocabulary.wordPlaceholder")}
-                    className="flex-1 px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-600/50
-                   text-white placeholder-slate-400 focus:outline-none focus:ring-2
-                   focus:ring-cyan-500/50 focus:border-transparent transition-all"
+                    className="flex-1 px-4 py-3 rounded-xl bg-white border border-stone
+                   text-ink placeholder-subtle focus:outline-none focus:ring-2
+                   focus:ring-ink-dark/20 focus:border-ink-dark transition-all font-serif-alt"
                     disabled={generating}
                 />
                 <button
                     onClick={handleGenerate}
                     disabled={generating || !word.trim()}
-                    className="px-6 py-3 bg-linear-to-r from-cyan-500 to-blue-500
-                   hover:from-cyan-400 hover:to-blue-400 text-white font-medium
-                   rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed
-                   flex items-center gap-2"
+                    className="px-6 py-3 bg-ink-dark hover:bg-ink
+                   text-white font-medium rounded-xl transition-all 
+                   disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-serif-alt"
                 >
                     {generating ? (
                         <>
@@ -170,20 +169,20 @@ export default function VocabularyForm({
 
             {/* Error/Warning Messages */}
             {wordExists && (
-                <p className="text-yellow-400 text-sm mb-4">
+                <p className="text-amber-700 text-sm mb-4 font-serif-alt">
                     {t("vocabulary.wordExists")}
                 </p>
             )}
-            {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+            {error && <p className="text-red-600 text-sm mb-4 font-serif-alt">{error}</p>}
 
             {/* Generated Content Preview */}
             {generatedData && (
-                <div className="bg-slate-900/50 rounded-xl p-4 mb-4 border border-slate-600/30 max-h-[60vh] overflow-y-auto">
+                <div className="bg-white rounded-xl p-4 mb-4 border border-stone max-h-[60vh] overflow-y-auto">
                     <div className="space-y-4">
                         {/* Word and IPA */}
                         <div>
                             <div className="flex items-baseline gap-3 flex-wrap">
-                                <h4 className="text-xl font-bold text-cyan-400 font-mono">
+                                <h4 className="text-xl font-semibold text-ink font-serif">
                                     {generatedData.word}
                                 </h4>
                             </div>
@@ -192,10 +191,10 @@ export default function VocabularyForm({
 
                         {/* Meaning */}
                         <div>
-                            <label className="text-xs text-cyan-400 uppercase tracking-wide font-medium">
+                            <label className="text-xs text-muted uppercase tracking-wide font-medium font-serif-alt">
                                 {t("vocabulary.meaning")}
                             </label>
-                            <div className="mt-1 p-3 bg-slate-800/50 rounded-lg">
+                            <div className="mt-1 p-3 bg-paper rounded-lg border border-stone">
                                 {renderMeaningPreview()}
                             </div>
                         </div>
@@ -203,10 +202,10 @@ export default function VocabularyForm({
                         {/* Usage */}
                         {generatedData.usage && (
                             <div>
-                                <label className="text-xs text-emerald-400 uppercase tracking-wide font-medium">
+                                <label className="text-xs text-muted uppercase tracking-wide font-medium font-serif-alt">
                                     {t("vocabulary.usage")}
                                 </label>
-                                <div className="mt-1 p-3 bg-slate-800/50 rounded-lg">
+                                <div className="mt-1 p-3 bg-paper rounded-lg border border-stone">
                                     <UsageSectionDisplay
                                         usage={generatedData.usage}
                                     />
@@ -217,10 +216,10 @@ export default function VocabularyForm({
                         {/* Cultural Context */}
                         {generatedData.culturalContext && (
                             <div>
-                                <label className="text-xs text-purple-400 uppercase tracking-wide font-medium">
+                                <label className="text-xs text-muted uppercase tracking-wide font-medium font-serif-alt">
                                     {t("vocabulary.culturalContext")}
                                 </label>
-                                <div className="mt-1 p-3 bg-slate-800/50 rounded-lg">
+                                <div className="mt-1 p-3 bg-paper rounded-lg border border-stone">
                                     <CulturalContextSectionDisplay
                                         culturalContext={
                                             generatedData.culturalContext
@@ -232,12 +231,12 @@ export default function VocabularyForm({
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 mt-4 pt-4 border-t border-slate-700/50">
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-stone">
                         <button
                             onClick={handleAdd}
-                            className="flex-1 px-4 py-2 bg-linear-to-r from-emerald-500 to-green-500
-                       hover:from-emerald-400 hover:to-green-400 text-white font-medium
-                       rounded-lg transition-all flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-2 bg-ink-dark hover:bg-ink
+                       text-white font-medium rounded-lg transition-all 
+                       flex items-center justify-center gap-2 font-serif-alt"
                         >
                             <svg
                                 className="w-4 h-4"
@@ -259,8 +258,8 @@ export default function VocabularyForm({
                                 setGeneratedData(null);
                                 setWord("");
                             }}
-                            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white
-                       font-medium rounded-lg transition-all"
+                            className="px-4 py-2 bg-paper hover:bg-white text-muted
+                       font-medium rounded-lg transition-all border border-stone font-serif-alt"
                         >
                             {t("common.cancel")}
                         </button>
@@ -272,7 +271,7 @@ export default function VocabularyForm({
             {!generatedData && (
                 <button
                     onClick={onCancel}
-                    className="text-slate-400 hover:text-white text-sm transition-colors"
+                    className="text-subtle hover:text-ink text-sm transition-colors font-serif-alt"
                 >
                     {t("common.cancel")}
                 </button>

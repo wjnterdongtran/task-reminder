@@ -72,21 +72,21 @@ export default function VocabularyDetailModal({
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
-            <div className="w-full max-w-2xl bg-slate-900 rounded-2xl border border-slate-700/50 shadow-2xl max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+            <div className="w-full max-w-2xl bg-paper rounded-2xl border border-stone shadow-xl max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
                 {/* Header */}
-                <div className="p-6 border-b border-slate-700/50 flex items-start justify-between">
+                <div className="p-6 border-b border-stone flex items-start justify-between bg-white">
                     <div className="flex-1">
                         <div className="flex items-baseline gap-3 flex-wrap mb-2">
-                            <h2 className="text-2xl font-bold text-cyan-400 font-mono">
+                            <h2 className="text-2xl font-semibold text-ink font-serif">
                                 {vocabulary.word}
                             </h2>
                         </div>
                         {/* IPA */}
                         <IPADisplay ipa={parsed.ipa} />
-                        <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                        <div className="flex items-center gap-4 mt-2 text-xs text-subtle font-serif-alt">
                             <span>
                                 {t("taskItem.created")}:{" "}
                                 {format(
@@ -110,8 +110,8 @@ export default function VocabularyDetailModal({
                             }
                             className={`p-2 rounded-lg transition-all ${
                                 vocabulary.isFavorite
-                                    ? "text-yellow-400 bg-yellow-500/10"
-                                    : "text-slate-400 hover:text-yellow-400 hover:bg-yellow-500/10"
+                                    ? "text-ink bg-stone/50"
+                                    : "text-subtle hover:text-ink hover:bg-stone/30"
                             }`}
                         >
                             <svg
@@ -134,7 +134,7 @@ export default function VocabularyDetailModal({
                         </button>
                         <button
                             onClick={onClose}
-                            className="p-2 text-slate-400 hover:text-white hover:bg-slate-700/50
+                            className="p-2 text-subtle hover:text-ink hover:bg-stone/30
                        rounded-lg transition-all"
                         >
                             <svg
@@ -158,7 +158,7 @@ export default function VocabularyDetailModal({
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Meaning */}
                     <div>
-                        <label className="text-sm text-cyan-400 font-medium uppercase tracking-wide flex items-center gap-2 mb-3">
+                        <label className="text-sm text-muted font-medium uppercase tracking-wide flex items-center gap-2 mb-3 font-serif-alt">
                             <svg
                                 className="w-4 h-4"
                                 fill="none"
@@ -174,7 +174,7 @@ export default function VocabularyDetailModal({
                             </svg>
                             {t("vocabulary.meaning")}
                         </label>
-                        <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
+                        <div className="p-4 bg-white rounded-xl border border-stone">
                             <MeaningDisplay meaning={parsed.meaning} />
                         </div>
                     </div>
@@ -182,7 +182,7 @@ export default function VocabularyDetailModal({
                     {/* Usage */}
                     {hasUsage && (
                         <div>
-                            <label className="text-sm text-emerald-400 font-medium uppercase tracking-wide flex items-center gap-2 mb-3">
+                            <label className="text-sm text-muted font-medium uppercase tracking-wide flex items-center gap-2 mb-3 font-serif-alt">
                                 <svg
                                     className="w-4 h-4"
                                     fill="none"
@@ -198,7 +198,7 @@ export default function VocabularyDetailModal({
                                 </svg>
                                 {t("vocabulary.usage")}
                             </label>
-                            <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
+                            <div className="p-4 bg-white rounded-xl border border-stone">
                                 <UsageSectionDisplay usage={parsed.usage} />
                             </div>
                         </div>
@@ -207,7 +207,7 @@ export default function VocabularyDetailModal({
                     {/* Cultural Context */}
                     {hasCulturalContext && (
                         <div>
-                            <label className="text-sm text-purple-400 font-medium uppercase tracking-wide flex items-center gap-2 mb-3">
+                            <label className="text-sm text-muted font-medium uppercase tracking-wide flex items-center gap-2 mb-3 font-serif-alt">
                                 <svg
                                     className="w-4 h-4"
                                     fill="none"
@@ -223,7 +223,7 @@ export default function VocabularyDetailModal({
                                 </svg>
                                 {t("vocabulary.culturalContext")}
                             </label>
-                            <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/30">
+                            <div className="p-4 bg-white rounded-xl border border-stone">
                                 <CulturalContextSectionDisplay
                                     culturalContext={parsed.culturalContext}
                                 />
@@ -233,11 +233,11 @@ export default function VocabularyDetailModal({
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-slate-700/50 flex justify-end">
+                <div className="p-4 border-t border-stone flex justify-end bg-white">
                     <button
                         onClick={onClose}
-                        className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white
-                     font-medium rounded-lg transition-all"
+                        className="px-6 py-2 bg-muted hover:bg-ink-dark text-white
+                     font-medium rounded-lg transition-all font-serif-alt"
                     >
                         {t("common.cancel")}
                     </button>

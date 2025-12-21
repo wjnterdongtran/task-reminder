@@ -74,10 +74,10 @@ export default function VocabularyPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#fafaf8]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <div className="text-slate-400 font-mono">{t('common.loading')}</div>
+          <div className="w-12 h-12 border-4 border-ink-dark border-t-transparent rounded-full animate-spin"></div>
+          <div className="text-subtle font-serif-alt">{t('common.loading')}</div>
         </div>
       </div>
     );
@@ -85,30 +85,30 @@ export default function VocabularyPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-[#fafaf8]">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
           <header className="mb-8 animate-slide-up">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
               <div>
-                <h1 className="text-5xl font-bold text-white font-mono tracking-tight mb-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-semibold text-ink font-serif tracking-tight mb-2">
                   {t('vocabulary.title')}
                 </h1>
-                <p className="text-slate-400 text-sm">
+                <p className="text-subtle text-sm font-serif-alt">
                   Learn English vocabulary with AI-powered content
                 </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
                 {/* User Info & Sign Out */}
-                <div className="flex items-center gap-3 px-4 py-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
-                  <div className="text-sm">
-                    <span className="text-slate-400">Signed in as:</span>{' '}
-                    <span className="text-cyan-400">{user?.email}</span>
+                <div className="flex items-center gap-3 px-4 py-2 bg-paper rounded-lg border border-stone">
+                  <div className="text-sm font-serif-alt">
+                    <span className="text-subtle">Signed in as:</span>{' '}
+                    <span className="text-ink font-medium">{user?.email}</span>
                   </div>
                   <button
                     onClick={handleSignOut}
-                    className="text-slate-400 hover:text-red-400 transition-colors text-sm"
+                    className="text-subtle hover:text-ink transition-colors text-sm"
                     title="Sign out"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,10 +121,10 @@ export default function VocabularyPage() {
                 <LanguageSwitcher />
 
                 {/* Navigation Toggle */}
-                <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-1 border border-slate-700/50 backdrop-blur-sm">
+                <div className="flex items-center gap-2 bg-paper rounded-lg p-1 border border-stone">
                   <Link
                     href="/"
-                    className="px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md flex items-center gap-2 text-slate-400 hover:text-slate-200"
+                    className="px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md flex items-center gap-2 text-subtle hover:text-ink"
                     title={t('header.tasks')}
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +132,7 @@ export default function VocabularyPage() {
                     </svg>
                     <span className="hidden sm:inline">{t('header.tasks')}</span>
                   </Link>
-                  <div className="px-4 py-2 text-sm font-medium rounded-md flex items-center gap-2 text-white bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+                  <div className="px-4 py-2 text-sm font-medium rounded-md flex items-center gap-2 text-white bg-ink-dark">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
@@ -146,11 +146,11 @@ export default function VocabularyPage() {
                   <button
                     onClick={() => setAddMode(addMode === 'ai' ? 'none' : 'ai')}
                     className={`
-                      px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2
+                      px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 border
                       ${
                         addMode === 'ai'
-                          ? 'bg-slate-700 text-slate-200 hover:bg-slate-600'
-                          : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/25'
+                          ? 'bg-paper text-muted border-stone'
+                          : 'bg-ink-dark text-white border-ink-dark hover:bg-ink'
                       }
                     `}
                     title={t('vocabulary.aiGenerate')}
@@ -165,8 +165,7 @@ export default function VocabularyPage() {
                   <button
                     onClick={() => setAddMode('manual')}
                     className="px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2
-                             bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700
-                             shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40"
+                             bg-muted text-white border border-muted hover:bg-ink-dark"
                     title={t('vocabulary.manualCreate')}
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

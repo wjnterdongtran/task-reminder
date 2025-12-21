@@ -154,9 +154,9 @@ interface SectionHeaderProps {
 }
 
 const colorClasses: Record<ColorTheme, string> = {
-    emerald: "text-emerald-400",
-    orange: "text-orange-400",
-    purple: "text-purple-400",
+    emerald: "text-muted",
+    orange: "text-muted",
+    purple: "text-muted",
 };
 
 export function SectionHeader({
@@ -199,7 +199,7 @@ export function IPADisplay({
             if (ipa.uk) parts.push(`UK: ${ipa.uk}`);
             if (ipa.us) parts.push(`US: ${ipa.us}`);
             return parts.length > 0 ? (
-                <span className={`text-slate-400 text-sm ${className}`}>
+                <span className={`text-subtle text-sm font-mono ${className}`}>
                     {parts.join(" | ")}
                 </span>
             ) : null;
@@ -208,16 +208,16 @@ export function IPADisplay({
         return (
             <div className={`flex items-center gap-3 flex-wrap ${className}`}>
                 {ipa.uk && (
-                    <span className="text-slate-400 text-sm">
-                        <span className="text-xs text-slate-500 uppercase mr-1">
+                    <span className="text-subtle text-sm font-mono">
+                        <span className="text-xs text-subtle uppercase mr-1">
                             UK
                         </span>
                         {ipa.uk}
                     </span>
                 )}
                 {ipa.us && (
-                    <span className="text-slate-400 text-sm">
-                        <span className="text-xs text-slate-500 uppercase mr-1">
+                    <span className="text-subtle text-sm font-mono">
+                        <span className="text-xs text-subtle uppercase mr-1">
                             US
                         </span>
                         {ipa.us}
@@ -228,7 +228,7 @@ export function IPADisplay({
     }
 
     return (
-        <span className={`text-slate-400 text-sm ${className}`}>
+        <span className={`text-subtle text-sm font-mono ${className}`}>
             {String(ipa)}
         </span>
     );
@@ -256,7 +256,7 @@ export function PartOfSpeechBadge({
 
     return (
         <span
-            className={`inline-block ${sizeClasses} bg-cyan-500/20 text-cyan-300 rounded-full font-medium ${className}`}
+            className={`inline-block ${sizeClasses} bg-stone text-ink rounded-full font-medium font-serif-alt ${className}`}
         >
             {partOfSpeech}
         </span>
@@ -301,8 +301,8 @@ export function MeaningDisplay({
                 {meaning.partOfSpeech && (
                     <PartOfSpeechBadge partOfSpeech={meaning.partOfSpeech} />
                 )}
-                <div className="text-white leading-relaxed">
-                    <MarkdownContent content={formattedVietnamese} />
+                <div className="text-ink leading-relaxed font-serif-alt">
+                    <MarkdownContent content={formattedVietnamese} variant="eink" />
                 </div>
             </div>
         );
@@ -313,7 +313,7 @@ export function MeaningDisplay({
 
     return (
         <p
-            className={`text-white whitespace-pre-wrap leading-relaxed ${className}`}
+            className={`text-ink whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
         >
             {formattedMeaning}
         </p>
@@ -350,9 +350,9 @@ export function CollocationsDisplay({
                 {collocations.map((col, index) => (
                     <span
                         key={index}
-                        className="px-2 py-1 bg-slate-700/50 rounded text-sm text-slate-300"
+                        className="px-2 py-1 bg-stone/50 rounded text-sm text-muted font-serif-alt"
                     >
-                        <MarkdownContent content={col} />
+                        <MarkdownContent content={col} variant="eink" />
                     </span>
                 ))}
             </div>
@@ -386,7 +386,7 @@ export function ExamplesDisplay({
                     icon={Icons.examples}
                 />
             )}
-            <MarkdownList items={examples} ordered />
+            <MarkdownList items={examples} ordered variant="eink" />
         </div>
     );
 }
@@ -417,7 +417,7 @@ export function GrammarPatternsDisplay({
                     icon={Icons.grammarPatterns}
                 />
             )}
-            <MarkdownList items={grammarPatterns} />
+            <MarkdownList items={grammarPatterns} variant="eink" />
         </div>
     );
 }
@@ -448,8 +448,8 @@ export function CommonMistakesDisplay({
                     icon={Icons.commonMistakes}
                 />
             )}
-            <div className="text-orange-200/80">
-                <MarkdownContent content={commonMistakes} />
+            <div className="text-amber-800 font-serif-alt">
+                <MarkdownContent content={commonMistakes} variant="eink" />
             </div>
         </div>
     );
@@ -481,8 +481,8 @@ export function EtymologyDisplay({
                     icon={Icons.etymology}
                 />
             )}
-            <div className="text-slate-300">
-                <MarkdownContent content={etymology} />
+            <div className="text-muted font-serif-alt">
+                <MarkdownContent content={etymology}  variant="eink"/>
             </div>
         </div>
     );
@@ -514,8 +514,8 @@ export function CulturalSignificanceDisplay({
                     icon={Icons.culturalSignificance}
                 />
             )}
-            <div className="text-slate-300">
-                <MarkdownContent content={culturalSignificance} />
+            <div className="text-muted font-serif-alt">
+                <MarkdownContent content={culturalSignificance} variant="eink" />
             </div>
         </div>
     );
@@ -547,7 +547,7 @@ export function RelatedExpressionsDisplay({
                     icon={Icons.relatedExpressions}
                 />
             )}
-            <MarkdownList items={relatedExpressions} />
+            <MarkdownList items={relatedExpressions} variant="eink" />
         </div>
     );
 }
@@ -578,8 +578,8 @@ export function NuancesDisplay({
                     icon={Icons.nuances}
                 />
             )}
-            <div className="text-slate-300">
-                <MarkdownContent content={nuances} />
+            <div className="text-muted font-serif-alt">
+                <MarkdownContent content={nuances} variant="eink" />
             </div>
         </div>
     );
@@ -615,7 +615,7 @@ export function UsageSectionDisplay({
 
     return (
         <p
-            className={`text-slate-300 whitespace-pre-wrap leading-relaxed ${className}`}
+            className={`text-muted whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
         >
             {String(usage)}
         </p>
@@ -656,7 +656,7 @@ export function CulturalContextSectionDisplay({
 
     return (
         <p
-            className={`text-slate-400 whitespace-pre-wrap leading-relaxed ${className}`}
+            className={`text-muted whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
         >
             {String(culturalContext)}
         </p>
