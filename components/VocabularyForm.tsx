@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useVocabularyTheme } from "@/contexts/VocabularyThemeContext";
 import { VocabularyAIResponse } from "@/types/vocabulary";
 import MarkdownContent from "./MarkdownContent";
 import {
@@ -27,6 +28,7 @@ export default function VocabularyForm({
     onCancel,
 }: VocabularyFormProps) {
     const { t } = useTranslation();
+    const { isDark } = useVocabularyTheme();
     const [word, setWord] = useState("");
     const [generatedData, setGeneratedData] =
         useState<VocabularyAIResponse | null>(null);
@@ -68,6 +70,9 @@ export default function VocabularyForm({
         }
     };
 
+    // Get markdown variant based on theme
+    const markdownVariant = isDark ? "eink-dark" : "eink";
+
     // Render meaning preview
     const renderMeaningPreview = () => {
         if (!generatedData?.meaning) return null;
@@ -82,20 +87,20 @@ export default function VocabularyForm({
                             variant="small"
                         />
                     )}
-                    <div className="text-ink font-serif-alt">
-                        <MarkdownContent content={meaning.vietnamese} variant="eink" />
+                    <div className="text-[var(--vocab-text)] font-serif-alt">
+                        <MarkdownContent content={meaning.vietnamese} variant={markdownVariant} />
                     </div>
                 </div>
             );
         }
         return (
-            <p className="text-ink whitespace-pre-wrap font-serif-alt">{String(meaning)}</p>
+            <p className="text-[var(--vocab-text)] whitespace-pre-wrap font-serif-alt">{String(meaning)}</p>
         );
     };
 
     return (
-        <div className="bg-paper rounded-2xl border border-stone p-6 mb-6 animate-slideUp">
-            <h3 className="text-lg font-semibold text-ink mb-4 font-serif">
+        <div className="bg-[var(--vocab-card)] rounded-2xl border border-[var(--vocab-border)] p-6 mb-6 animate-slideUp">
+            <h3 className="text-lg font-semibold text-[var(--vocab-text)] mb-4 font-serif">
                 {t("vocabulary.addWord")}
             </h3>
 
@@ -111,8 +116,8 @@ export default function VocabularyForm({
                     }}
                     onKeyDown={handleKeyDown}
                     placeholder={t("vocabulary.wordPlaceholder")}
-                    className="flex-1 px-4 py-3 rounded-xl bg-white border border-stone
-                   text-ink placeholder-subtle focus:outline-none focus:ring-2
+                    className="flex-1 px-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                   text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                    focus:ring-ink-dark/20 focus:border-ink-dark transition-all font-serif-alt"
                     disabled={generating}
                 />
@@ -177,12 +182,12 @@ export default function VocabularyForm({
 
             {/* Generated Content Preview */}
             {generatedData && (
-                <div className="bg-white rounded-xl p-4 mb-4 border border-stone max-h-[60vh] overflow-y-auto">
+                <div className="bg-[var(--vocab-card-alt)] rounded-xl p-4 mb-4 border border-[var(--vocab-border)] max-h-[60vh] overflow-y-auto">
                     <div className="space-y-4">
                         {/* Word and IPA */}
                         <div>
                             <div className="flex items-baseline gap-3 flex-wrap">
-                                <h4 className="text-xl font-semibold text-ink font-serif">
+                                <h4 className="text-xl font-semibold text-[var(--vocab-text)] font-serif">
                                     {generatedData.word}
                                 </h4>
                             </div>
@@ -191,10 +196,10 @@ export default function VocabularyForm({
 
                         {/* Meaning */}
                         <div>
-                            <label className="text-xs text-muted uppercase tracking-wide font-medium font-serif-alt">
+                            <label className="text-xs text-[var(--vocab-text-secondary)] uppercase tracking-wide font-medium font-serif-alt">
                                 {t("vocabulary.meaning")}
                             </label>
-                            <div className="mt-1 p-3 bg-paper rounded-lg border border-stone">
+                            <div className="mt-1 p-3 bg-[var(--vocab-card)] rounded-lg border border-[var(--vocab-border)]">
                                 {renderMeaningPreview()}
                             </div>
                         </div>
@@ -202,10 +207,10 @@ export default function VocabularyForm({
                         {/* Usage */}
                         {generatedData.usage && (
                             <div>
-                                <label className="text-xs text-muted uppercase tracking-wide font-medium font-serif-alt">
+                                <label className="text-xs text-[var(--vocab-text-secondary)] uppercase tracking-wide font-medium font-serif-alt">
                                     {t("vocabulary.usage")}
                                 </label>
-                                <div className="mt-1 p-3 bg-paper rounded-lg border border-stone">
+                                <div className="mt-1 p-3 bg-[var(--vocab-card)] rounded-lg border border-[var(--vocab-border)]">
                                     <UsageSectionDisplay
                                         usage={generatedData.usage}
                                     />
@@ -216,10 +221,10 @@ export default function VocabularyForm({
                         {/* Cultural Context */}
                         {generatedData.culturalContext && (
                             <div>
-                                <label className="text-xs text-muted uppercase tracking-wide font-medium font-serif-alt">
+                                <label className="text-xs text-[var(--vocab-text-secondary)] uppercase tracking-wide font-medium font-serif-alt">
                                     {t("vocabulary.culturalContext")}
                                 </label>
-                                <div className="mt-1 p-3 bg-paper rounded-lg border border-stone">
+                                <div className="mt-1 p-3 bg-[var(--vocab-card)] rounded-lg border border-[var(--vocab-border)]">
                                     <CulturalContextSectionDisplay
                                         culturalContext={
                                             generatedData.culturalContext
@@ -231,7 +236,7 @@ export default function VocabularyForm({
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 mt-4 pt-4 border-t border-stone">
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-[var(--vocab-border)]">
                         <button
                             onClick={handleAdd}
                             className="flex-1 px-4 py-2 bg-ink-dark hover:bg-ink
@@ -258,8 +263,8 @@ export default function VocabularyForm({
                                 setGeneratedData(null);
                                 setWord("");
                             }}
-                            className="px-4 py-2 bg-paper hover:bg-white text-muted
-                       font-medium rounded-lg transition-all border border-stone font-serif-alt"
+                            className="px-4 py-2 bg-[var(--vocab-card)] hover:bg-[var(--vocab-card-alt)] text-[var(--vocab-text-secondary)]
+                       font-medium rounded-lg transition-all border border-[var(--vocab-border)] font-serif-alt"
                         >
                             {t("common.cancel")}
                         </button>
@@ -271,7 +276,7 @@ export default function VocabularyForm({
             {!generatedData && (
                 <button
                     onClick={onCancel}
-                    className="text-subtle hover:text-ink text-sm transition-colors font-serif-alt"
+                    className="text-[var(--vocab-text-muted)] hover:text-[var(--vocab-text)] text-sm transition-colors font-serif-alt"
                 >
                     {t("common.cancel")}
                 </button>

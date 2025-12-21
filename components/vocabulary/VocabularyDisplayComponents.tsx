@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useVocabularyTheme } from "@/contexts/VocabularyThemeContext";
 import MarkdownContent, { MarkdownList } from "../MarkdownContent";
 import {
     IPA,
@@ -12,6 +13,12 @@ import {
     isStructuredUsage,
     isStructuredCulturalContext,
 } from "@/types/vocabulary";
+
+// Hook to get the appropriate markdown variant based on theme
+function useMarkdownVariant(): "eink" | "eink-dark" {
+    const { isDark } = useVocabularyTheme();
+    return isDark ? "eink-dark" : "eink";
+}
 
 // ============================================
 // Common Icons
@@ -154,9 +161,9 @@ interface SectionHeaderProps {
 }
 
 const colorClasses: Record<ColorTheme, string> = {
-    emerald: "text-muted",
-    orange: "text-muted",
-    purple: "text-muted",
+    emerald: "text-[var(--vocab-text-secondary)]",
+    orange: "text-[var(--vocab-text-secondary)]",
+    purple: "text-[var(--vocab-text-secondary)]",
 };
 
 export function SectionHeader({
@@ -199,7 +206,7 @@ export function IPADisplay({
             if (ipa.uk) parts.push(`UK: ${ipa.uk}`);
             if (ipa.us) parts.push(`US: ${ipa.us}`);
             return parts.length > 0 ? (
-                <span className={`text-subtle text-sm font-mono ${className}`}>
+                <span className={`text-[var(--vocab-text-muted)] text-sm font-mono ${className}`}>
                     {parts.join(" | ")}
                 </span>
             ) : null;
@@ -208,16 +215,16 @@ export function IPADisplay({
         return (
             <div className={`flex items-center gap-3 flex-wrap ${className}`}>
                 {ipa.uk && (
-                    <span className="text-subtle text-sm font-mono">
-                        <span className="text-xs text-subtle uppercase mr-1">
+                    <span className="text-[var(--vocab-text-muted)] text-sm font-mono">
+                        <span className="text-xs text-[var(--vocab-text-muted)] uppercase mr-1">
                             UK
                         </span>
                         {ipa.uk}
                     </span>
                 )}
                 {ipa.us && (
-                    <span className="text-subtle text-sm font-mono">
-                        <span className="text-xs text-subtle uppercase mr-1">
+                    <span className="text-[var(--vocab-text-muted)] text-sm font-mono">
+                        <span className="text-xs text-[var(--vocab-text-muted)] uppercase mr-1">
                             US
                         </span>
                         {ipa.us}
@@ -228,7 +235,7 @@ export function IPADisplay({
     }
 
     return (
-        <span className={`text-subtle text-sm font-mono ${className}`}>
+        <span className={`text-[var(--vocab-text-muted)] text-sm font-mono ${className}`}>
             {String(ipa)}
         </span>
     );
@@ -256,7 +263,7 @@ export function PartOfSpeechBadge({
 
     return (
         <span
-            className={`inline-block ${sizeClasses} bg-stone text-ink rounded-full font-medium font-serif-alt ${className}`}
+            className={`inline-block ${sizeClasses} bg-[var(--vocab-border)] text-[var(--vocab-text)] rounded-full font-medium font-serif-alt ${className}`}
         >
             {partOfSpeech}
         </span>
@@ -288,6 +295,7 @@ export function MeaningDisplay({
     meaning,
     className = "",
 }: MeaningDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!meaning) return null;
 
     if (isStructuredMeaning(meaning)) {
@@ -301,8 +309,8 @@ export function MeaningDisplay({
                 {meaning.partOfSpeech && (
                     <PartOfSpeechBadge partOfSpeech={meaning.partOfSpeech} />
                 )}
-                <div className="text-ink leading-relaxed font-serif-alt">
-                    <MarkdownContent content={formattedVietnamese} variant="eink" />
+                <div className="text-[var(--vocab-text)] leading-relaxed font-serif-alt">
+                    <MarkdownContent content={formattedVietnamese} variant={variant} />
                 </div>
             </div>
         );
@@ -313,7 +321,7 @@ export function MeaningDisplay({
 
     return (
         <p
-            className={`text-ink whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
+            className={`text-[var(--vocab-text)] whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
         >
             {formattedMeaning}
         </p>
@@ -335,6 +343,7 @@ export function CollocationsDisplay({
     showHeader = true,
     className = "",
 }: CollocationsDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!collocations || collocations.length === 0) return null;
 
     return (
@@ -350,9 +359,9 @@ export function CollocationsDisplay({
                 {collocations.map((col, index) => (
                     <span
                         key={index}
-                        className="px-2 py-1 bg-stone/50 rounded text-sm text-muted font-serif-alt"
+                        className="px-2 py-1 bg-[var(--vocab-border)]/50 rounded text-sm text-[var(--vocab-text-secondary)] font-serif-alt"
                     >
-                        <MarkdownContent content={col} variant="eink" />
+                        <MarkdownContent content={col} variant={variant} />
                     </span>
                 ))}
             </div>
@@ -375,6 +384,7 @@ export function ExamplesDisplay({
     showHeader = true,
     className = "",
 }: ExamplesDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!examples || examples.length === 0) return null;
 
     return (
@@ -386,7 +396,7 @@ export function ExamplesDisplay({
                     icon={Icons.examples}
                 />
             )}
-            <MarkdownList items={examples} ordered variant="eink" />
+            <MarkdownList items={examples} ordered variant={variant} />
         </div>
     );
 }
@@ -406,6 +416,7 @@ export function GrammarPatternsDisplay({
     showHeader = true,
     className = "",
 }: GrammarPatternsDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!grammarPatterns || grammarPatterns.length === 0) return null;
 
     return (
@@ -417,7 +428,7 @@ export function GrammarPatternsDisplay({
                     icon={Icons.grammarPatterns}
                 />
             )}
-            <MarkdownList items={grammarPatterns} variant="eink" />
+            <MarkdownList items={grammarPatterns} variant={variant} />
         </div>
     );
 }
@@ -437,6 +448,7 @@ export function CommonMistakesDisplay({
     showHeader = true,
     className = "",
 }: CommonMistakesDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!commonMistakes) return null;
 
     return (
@@ -449,7 +461,7 @@ export function CommonMistakesDisplay({
                 />
             )}
             <div className="text-amber-800 font-serif-alt">
-                <MarkdownContent content={commonMistakes} variant="eink" />
+                <MarkdownContent content={commonMistakes} variant={variant} />
             </div>
         </div>
     );
@@ -470,6 +482,7 @@ export function EtymologyDisplay({
     showHeader = true,
     className = "",
 }: EtymologyDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!etymology) return null;
 
     return (
@@ -481,8 +494,8 @@ export function EtymologyDisplay({
                     icon={Icons.etymology}
                 />
             )}
-            <div className="text-muted font-serif-alt">
-                <MarkdownContent content={etymology}  variant="eink"/>
+            <div className="text-[var(--vocab-text-secondary)] font-serif-alt">
+                <MarkdownContent content={etymology} variant={variant}/>
             </div>
         </div>
     );
@@ -503,6 +516,7 @@ export function CulturalSignificanceDisplay({
     showHeader = true,
     className = "",
 }: CulturalSignificanceDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!culturalSignificance) return null;
 
     return (
@@ -514,8 +528,8 @@ export function CulturalSignificanceDisplay({
                     icon={Icons.culturalSignificance}
                 />
             )}
-            <div className="text-muted font-serif-alt">
-                <MarkdownContent content={culturalSignificance} variant="eink" />
+            <div className="text-[var(--vocab-text-secondary)] font-serif-alt">
+                <MarkdownContent content={culturalSignificance} variant={variant} />
             </div>
         </div>
     );
@@ -536,6 +550,7 @@ export function RelatedExpressionsDisplay({
     showHeader = true,
     className = "",
 }: RelatedExpressionsDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!relatedExpressions || relatedExpressions.length === 0) return null;
 
     return (
@@ -547,7 +562,7 @@ export function RelatedExpressionsDisplay({
                     icon={Icons.relatedExpressions}
                 />
             )}
-            <MarkdownList items={relatedExpressions} variant="eink" />
+            <MarkdownList items={relatedExpressions} variant={variant} />
         </div>
     );
 }
@@ -567,6 +582,7 @@ export function NuancesDisplay({
     showHeader = true,
     className = "",
 }: NuancesDisplayProps) {
+    const variant = useMarkdownVariant();
     if (!nuances) return null;
 
     return (
@@ -578,8 +594,8 @@ export function NuancesDisplay({
                     icon={Icons.nuances}
                 />
             )}
-            <div className="text-muted font-serif-alt">
-                <MarkdownContent content={nuances} variant="eink" />
+            <div className="text-[var(--vocab-text-secondary)] font-serif-alt">
+                <MarkdownContent content={nuances} variant={variant} />
             </div>
         </div>
     );
@@ -615,7 +631,7 @@ export function UsageSectionDisplay({
 
     return (
         <p
-            className={`text-muted whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
+            className={`text-[var(--vocab-text-secondary)] whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
         >
             {String(usage)}
         </p>
@@ -656,7 +672,7 @@ export function CulturalContextSectionDisplay({
 
     return (
         <p
-            className={`text-muted whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
+            className={`text-[var(--vocab-text-secondary)] whitespace-pre-wrap leading-relaxed font-serif-alt ${className}`}
         >
             {String(culturalContext)}
         </p>

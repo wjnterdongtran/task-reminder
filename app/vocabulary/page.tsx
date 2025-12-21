@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useVocabulary } from '@/hooks/useVocabulary';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { VocabularyThemeProvider, VocabThemeToggle, useVocabularyTheme } from '@/contexts/VocabularyThemeContext';
 import VocabularyForm from '@/components/VocabularyForm';
 import VocabularyTable from '@/components/VocabularyTable';
 import VocabularyDetailModal from '@/components/VocabularyDetailModal';
@@ -15,7 +16,7 @@ import Link from 'next/link';
 
 type AddMode = 'none' | 'ai' | 'manual';
 
-export default function VocabularyPage() {
+function VocabularyPageContent() {
   const { t } = useTranslation();
   const { user, signOut } = useAuth();
   const [addMode, setAddMode] = useState<AddMode>('none');
@@ -72,9 +73,11 @@ export default function VocabularyPage() {
     }
   };
 
+  const { isDark } = useVocabularyTheme();
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fafaf8]">
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-charcoal' : 'bg-[#fafaf8]'}`}>
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-ink-dark border-t-transparent rounded-full animate-spin"></div>
           <div className="text-subtle font-serif-alt">{t('common.loading')}</div>
@@ -85,16 +88,16 @@ export default function VocabularyPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-[#fafaf8]">
+      <div className={`vocab-theme min-h-screen transition-colors duration-300 ${isDark ? 'vocab-dark bg-[var(--vocab-bg)]' : 'bg-[var(--vocab-bg)]'}`}>
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
           <header className="mb-8 animate-slide-up">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
               <div>
-                <h1 className="text-4xl font-semibold text-ink font-serif tracking-tight mb-2">
+                <h1 className={`text-4xl font-semibold font-serif tracking-tight mb-2 ${isDark ? 'text-cream' : 'text-ink'}`}>
                   {t('vocabulary.title')}
                 </h1>
-                <p className="text-subtle text-sm font-serif-alt">
+                <p className={`text-sm font-serif-alt ${isDark ? 'text-fog' : 'text-subtle'}`}>
                   Learn English vocabulary with AI-powered content
                 </p>
               </div>
@@ -119,6 +122,9 @@ export default function VocabularyPage() {
 
                 {/* Language Switcher */}
                 <LanguageSwitcher />
+
+                {/* Theme Toggle */}
+                <VocabThemeToggle />
 
                 {/* Navigation Toggle */}
                 <div className="flex items-center gap-2 bg-paper rounded-lg p-1 border border-stone">
@@ -219,5 +225,14 @@ export default function VocabularyPage() {
         </div>
       </div>
     </ProtectedRoute>
+  );
+}
+
+// Wrap with theme provider
+export default function VocabularyPage() {
+  return (
+    <VocabularyThemeProvider>
+      <VocabularyPageContent />
+    </VocabularyThemeProvider>
   );
 }

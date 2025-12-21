@@ -101,14 +101,14 @@ export default function VocabularyTable({
                             className="shrink-0"
                         />
                     )}
-                    <span className="whitespace-pre-wrap text-muted font-serif-alt">
+                    <span className="whitespace-pre-wrap text-[var(--vocab-text-secondary)] font-serif-alt">
                         {formattedVietnamese}
                     </span>
                 </div>
             );
         }
         return (
-            <p className="text-muted font-serif-alt">
+            <p className="text-[var(--vocab-text-secondary)] font-serif-alt">
                 {typeof parsed.meaning === "string" ? parsed.meaning : ""}
             </p>
         );
@@ -135,13 +135,13 @@ export default function VocabularyTable({
             : !!parsed.culturalContext;
 
         return (
-            <div className="px-4 pb-4 pt-2 border-t border-stone space-y-4 animate-slideUp bg-white/50">
+            <div className="px-4 pb-4 pt-2 border-t border-[var(--vocab-border)] space-y-4 animate-slideUp bg-[var(--vocab-card-alt)]/50">
                 {/* Usage Section */}
                 {hasUsage && <UsageSectionDisplay usage={parsed.usage} />}
 
                 {/* Cultural Context Section */}
                 {hasCulturalContext && (
-                    <div className="pt-3 border-t border-stone">
+                    <div className="pt-3 border-t border-[var(--vocab-border)]">
                         <CulturalContextSectionDisplay
                             culturalContext={parsed.culturalContext}
                         />
@@ -157,7 +157,7 @@ export default function VocabularyTable({
             <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
                     <svg
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-subtle"
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--vocab-text-muted)]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -174,8 +174,8 @@ export default function VocabularyTable({
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder={t("vocabulary.searchPlaceholder")}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-stone
-                     text-ink placeholder-subtle focus:outline-none focus:ring-2
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                     text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                      focus:ring-ink-dark/20 focus:border-ink-dark transition-all font-serif-alt"
                     />
                 </div>
@@ -185,7 +185,7 @@ export default function VocabularyTable({
                         className={`px-4 py-2 rounded-lg font-medium transition-all font-serif-alt ${
                             !showFavoritesOnly
                                 ? "bg-ink-dark text-white"
-                                : "bg-paper text-muted border border-stone hover:bg-white"
+                                : "bg-[var(--vocab-card)] text-[var(--vocab-text-secondary)] border border-[var(--vocab-border)] hover:bg-[var(--vocab-card-alt)]"
                         }`}
                     >
                         {t("vocabulary.allWords")}
@@ -195,7 +195,7 @@ export default function VocabularyTable({
                         className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 font-serif-alt ${
                             showFavoritesOnly
                                 ? "bg-ink-dark text-white"
-                                : "bg-paper text-muted border border-stone hover:bg-white"
+                                : "bg-[var(--vocab-card)] text-[var(--vocab-text-secondary)] border border-[var(--vocab-border)] hover:bg-[var(--vocab-card-alt)]"
                         }`}
                     >
                         <svg
@@ -211,7 +211,7 @@ export default function VocabularyTable({
             </div>
 
             {/* Count */}
-            <div className="text-subtle text-sm font-serif-alt">
+            <div className="text-[var(--vocab-text-muted)] text-sm font-serif-alt">
                 {t("vocabulary.wordCount", {
                     count: filteredVocabulary.length,
                 })}
@@ -221,8 +221,8 @@ export default function VocabularyTable({
             {filteredVocabulary.length === 0 ? (
                 <div className="text-center py-12">
                     <div className="text-6xl mb-4">📚</div>
-                    <p className="text-muted font-serif-alt">{t("vocabulary.noWords")}</p>
-                    <p className="text-subtle text-sm mt-1 font-serif-alt">
+                    <p className="text-[var(--vocab-text-secondary)] font-serif-alt">{t("vocabulary.noWords")}</p>
+                    <p className="text-[var(--vocab-text-muted)] text-sm mt-1 font-serif-alt">
                         {t("vocabulary.noWordsHint")}
                     </p>
                 </div>
@@ -231,7 +231,7 @@ export default function VocabularyTable({
                     {filteredVocabulary.map((vocab) => (
                         <div
                             key={vocab.id}
-                            className="bg-paper rounded-xl border border-stone
+                            className="bg-[var(--vocab-card)] rounded-xl border border-[var(--vocab-border)]
                        overflow-hidden transition-all hover:border-ink-dark/30 hover:shadow-sm"
                         >
                             {/* Main Row */}
@@ -240,7 +240,7 @@ export default function VocabularyTable({
                                 <div className="flex items-center gap-3">
                                     {/* Word + IPA */}
                                     <div className="flex-1 min-w-0 flex items-baseline gap-2 flex-wrap">
-                                        <h4 className="text-lg font-semibold text-ink font-serif">
+                                        <h4 className="text-lg font-semibold text-[var(--vocab-text)] font-serif">
                                             {vocab.word}
                                         </h4>
                                         {renderIPA(vocab)}
@@ -256,7 +256,7 @@ export default function VocabularyTable({
                                                         : vocab.id
                                                 )
                                             }
-                                            className="p-2 text-subtle hover:text-ink hover:bg-stone/30
+                                            className="p-2 text-[var(--vocab-text-muted)] hover:text-[var(--vocab-text)] hover:bg-stone/30
                                  rounded-lg transition-all"
                                             title={
                                                 expandedId === vocab.id
@@ -292,8 +292,8 @@ export default function VocabularyTable({
                                             }
                                             className={`shrink-0 p-2 rounded-lg transition-all ${
                                                 vocab.isFavorite
-                                                    ? "text-ink bg-stone/50"
-                                                    : "text-subtle hover:text-ink hover:bg-stone/30"
+                                                    ? "text-[var(--vocab-text)] bg-stone/50"
+                                                    : "text-[var(--vocab-text-muted)] hover:text-[var(--vocab-text)] hover:bg-stone/30"
                                             }`}
                                         >
                                             <svg
@@ -316,7 +316,7 @@ export default function VocabularyTable({
                                         </button>
                                         <button
                                             onClick={() => onViewDetails(vocab)}
-                                            className="p-2 text-subtle hover:text-ink hover:bg-stone/30
+                                            className="p-2 text-[var(--vocab-text-muted)] hover:text-[var(--vocab-text)] hover:bg-stone/30
                                  rounded-lg transition-all"
                                             title={t("vocabulary.viewDetails")}
                                         >
@@ -347,7 +347,7 @@ export default function VocabularyTable({
                                             className={`p-2 rounded-lg transition-all ${
                                                 deleteConfirm === vocab.id
                                                     ? "text-red-600 bg-red-100"
-                                                    : "text-subtle hover:text-red-600 hover:bg-red-50"
+                                                    : "text-[var(--vocab-text-muted)] hover:text-red-600 hover:bg-red-50"
                                             }`}
                                             title={
                                                 deleteConfirm === vocab.id
@@ -380,7 +380,7 @@ export default function VocabularyTable({
                                 </div>
 
                                 {/* Third Row: Metadata */}
-                                <div className="flex items-center gap-4 mt-2 text-xs text-subtle font-serif-alt">
+                                <div className="flex items-center gap-4 mt-2 text-xs text-[var(--vocab-text-muted)] font-serif-alt">
                                     <span>
                                         {t("vocabulary.reviews")}:{" "}
                                         {vocab.reviewCount}

@@ -2,7 +2,7 @@
 
 import ReactMarkdown from "react-markdown";
 
-type StyleVariant = "default" | "eink";
+type StyleVariant = "default" | "eink" | "eink-dark";
 
 interface MarkdownContentProps {
     content: string;
@@ -37,6 +37,19 @@ const styles = {
         code: "px-1.5 py-0.5 bg-stone/50 rounded text-ink-dark text-sm font-mono",
         pre: "p-3 bg-paper rounded-lg border border-stone overflow-x-auto my-2",
         bullet: "text-subtle",
+    },
+    "eink-dark": {
+        container: "prose prose-sm max-w-none font-serif-alt",
+        strong: "font-semibold text-cream",
+        em: "italic text-fog",
+        a: "text-cream hover:text-white underline decoration-ash",
+        p: "mb-2 last:mb-0 leading-relaxed text-cream",
+        ul: "list-disc list-inside space-y-1 my-2",
+        ol: "list-decimal list-inside space-y-1 my-2",
+        li: "text-fog",
+        code: "px-1.5 py-0.5 bg-slate-dark/50 rounded text-cream text-sm font-mono",
+        pre: "p-3 bg-graphite rounded-lg border border-ash overflow-x-auto my-2",
+        bullet: "text-ash",
     },
 };
 

@@ -103,15 +103,15 @@ export default function VocabularyManualModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-2xl bg-paper rounded-2xl border border-stone shadow-xl max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+      <div className="w-full max-w-2xl bg-[var(--vocab-card)] rounded-2xl border border-[var(--vocab-border)] shadow-xl max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
         {/* Header */}
-        <div className="p-6 border-b border-stone flex items-center justify-between bg-white">
-          <h2 className="text-xl font-semibold text-ink font-serif">
+        <div className="p-6 border-b border-[var(--vocab-border)] flex items-center justify-between bg-[var(--vocab-card-alt)]">
+          <h2 className="text-xl font-semibold text-[var(--vocab-text)] font-serif">
             {t('vocabulary.manualCreate')}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-subtle hover:text-ink hover:bg-stone/30 rounded-lg transition-all"
+            className="p-2 text-[var(--vocab-text-muted)] hover:text-[var(--vocab-text)] hover:bg-stone/30 rounded-lg transition-all"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -123,7 +123,7 @@ export default function VocabularyManualModal({
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Word */}
           <div>
-            <label className="block text-sm font-medium text-ink mb-2 font-serif-alt">
+            <label className="block text-sm font-medium text-[var(--vocab-text)] mb-2 font-serif-alt">
               {t('vocabulary.word')} <span className="text-red-600">*</span>
             </label>
             <input
@@ -131,8 +131,8 @@ export default function VocabularyManualModal({
               value={word}
               onChange={(e) => setWord(e.target.value)}
               placeholder={t('vocabulary.wordPlaceholder')}
-              className="w-full px-4 py-3 rounded-xl bg-white border border-stone
-                       text-ink placeholder-subtle focus:outline-none focus:ring-2
+              className="w-full px-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                       text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                        focus:ring-ink-dark/20 focus:border-ink-dark transition-all font-serif-alt"
               autoFocus
             />
@@ -140,7 +140,7 @@ export default function VocabularyManualModal({
 
           {/* IPA */}
           <div>
-            <label className="block text-sm font-medium text-subtle mb-2 font-serif-alt">
+            <label className="block text-sm font-medium text-[var(--vocab-text-muted)] mb-2 font-serif-alt">
               {t('vocabulary.ipa')}
             </label>
             <input
@@ -148,15 +148,15 @@ export default function VocabularyManualModal({
               value={ipa}
               onChange={(e) => setIpa(e.target.value)}
               placeholder="/ˈeksəmpəl/"
-              className="w-full px-4 py-3 rounded-xl bg-white border border-stone
-                       text-ink placeholder-subtle focus:outline-none focus:ring-2
+              className="w-full px-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                       text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                        focus:ring-ink-dark/20 focus:border-ink-dark transition-all font-mono"
             />
           </div>
 
           {/* Meaning */}
           <div>
-            <label className="block text-sm font-medium text-ink mb-2 font-serif-alt">
+            <label className="block text-sm font-medium text-[var(--vocab-text)] mb-2 font-serif-alt">
               {t('vocabulary.meaning')} <span className="text-red-600">*</span>
             </label>
             <textarea
@@ -164,15 +164,15 @@ export default function VocabularyManualModal({
               onChange={(e) => setMeaning(e.target.value)}
               placeholder={t('vocabulary.meaningPlaceholder')}
               rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-white border border-stone
-                       text-ink placeholder-subtle focus:outline-none focus:ring-2
+              className="w-full px-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                       text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                        focus:ring-ink-dark/20 focus:border-ink-dark transition-all resize-none font-serif-alt"
             />
           </div>
 
           {/* Usage */}
           <div>
-            <label className="block text-sm font-medium text-subtle mb-2 font-serif-alt">
+            <label className="block text-sm font-medium text-[var(--vocab-text-muted)] mb-2 font-serif-alt">
               {t('vocabulary.usage')}
             </label>
             <textarea
@@ -180,15 +180,15 @@ export default function VocabularyManualModal({
               onChange={(e) => setUsage(e.target.value)}
               placeholder={t('vocabulary.usagePlaceholder')}
               rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-white border border-stone
-                       text-ink placeholder-subtle focus:outline-none focus:ring-2
+              className="w-full px-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                       text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                        focus:ring-ink-dark/20 focus:border-ink-dark transition-all resize-none font-serif-alt"
             />
           </div>
 
           {/* Cultural Context */}
           <div>
-            <label className="block text-sm font-medium text-subtle mb-2 font-serif-alt">
+            <label className="block text-sm font-medium text-[var(--vocab-text-muted)] mb-2 font-serif-alt">
               {t('vocabulary.culturalContext')}
             </label>
             <textarea
@@ -196,8 +196,8 @@ export default function VocabularyManualModal({
               onChange={(e) => setCulturalContext(e.target.value)}
               placeholder={t('vocabulary.culturalContextPlaceholder')}
               rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-white border border-stone
-                       text-ink placeholder-subtle focus:outline-none focus:ring-2
+              className="w-full px-4 py-3 rounded-xl bg-[var(--vocab-card-alt)] border border-[var(--vocab-border)]
+                       text-[var(--vocab-text)] placeholder-subtle focus:outline-none focus:ring-2
                        focus:ring-ink-dark/20 focus:border-ink-dark transition-all resize-none font-serif-alt"
             />
           </div>
@@ -209,12 +209,12 @@ export default function VocabularyManualModal({
         </form>
 
         {/* Footer */}
-        <div className="p-4 border-t border-stone flex justify-end gap-3 bg-white">
+        <div className="p-4 border-t border-[var(--vocab-border)] flex justify-end gap-3 bg-[var(--vocab-card-alt)]">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2 bg-paper hover:bg-white text-muted
-                     font-medium rounded-lg transition-all border border-stone font-serif-alt"
+            className="px-6 py-2 bg-[var(--vocab-card)] hover:bg-[var(--vocab-card-alt)] text-[var(--vocab-text-secondary)]
+                     font-medium rounded-lg transition-all border border-[var(--vocab-border)] font-serif-alt"
           >
             {t('common.cancel')}
           </button>

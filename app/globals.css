@@ -18,13 +18,46 @@
   --font-serif: 'Crimson Pro', 'Georgia', serif;
   --font-serif-alt: 'Source Serif 4', 'Georgia', serif;
   
-  /* Vocabulary page color palette */
+  /* Light e-ink palette (paper-like) */
   --color-ink: #1a1a1a;
   --color-ink-dark: #2c2c2c;
   --color-muted: #4a4a4a;
   --color-subtle: #737373;
   --color-stone: #d4d4c8;
   --color-paper: #f5f5f0;
+  
+  /* Dark e-ink palette */
+  --color-charcoal: #1c1c1c;
+  --color-graphite: #2a2a2a;
+  --color-slate-dark: #3a3a3a;
+  --color-ash: #6a6a6a;
+  --color-fog: #a0a0a0;
+  --color-cream: #e8e8e0;
+}
+
+/* Vocabulary theme - semantic color variables */
+.vocab-theme {
+  --vocab-bg: #fafaf8;
+  --vocab-card: #f5f5f0;
+  --vocab-card-alt: #ffffff;
+  --vocab-border: #d4d4c8;
+  --vocab-text: #1a1a1a;
+  --vocab-text-secondary: #4a4a4a;
+  --vocab-text-muted: #737373;
+  --vocab-accent: #2c2c2c;
+  --vocab-accent-hover: #1a1a1a;
+}
+
+.vocab-dark {
+  --vocab-bg: #1c1c1c;
+  --vocab-card: #2a2a2a;
+  --vocab-card-alt: #3a3a3a;
+  --vocab-border: #4a4a4a;
+  --vocab-text: #e8e8e0;
+  --vocab-text-secondary: #a0a0a0;
+  --vocab-text-muted: #6a6a6a;
+  --vocab-accent: #a0a0a0;
+  --vocab-accent-hover: #e8e8e0;
 }
 
 * {
